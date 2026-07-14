@@ -1,7 +1,49 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AdminBookingController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminRoomController;
+use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\RoomController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', [RoomController::class, 'index'])->name('home');
+
+Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
+Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
+Route::get('/rooms/{room}/schedule', [RoomController::class, 'schedule'])->name('rooms.schedule');
+
+Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
+Route::get('/my-bookings', [BookingController::class, 'myBookings'])->name('bookings.my');
+Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+Route::post('/bookings/{booking}/cancel-recurrence', [BookingController::class, 'cancelRecurrence'])->name('bookings.cancel-recurrence');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+
+    // Admin & Operator: dashboard, rooms, bookings
+    Route::middleware('operator')->group(function () {
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+        Route::resource('rooms', AdminRoomController::class)->except('show');
+        Route::post('rooms/{room}/toggle', [AdminRoomController::class, 'toggle'])->name('rooms.toggle');
+
+        Route::get('bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
+        Route::get('bookings/export/pdf', [AdminBookingController::class, 'exportPdf'])->name('bookings.export.pdf');
+        Route::get('bookings/export/csv', [AdminBookingController::class, 'exportCsv'])->name('bookings.export.csv');
+        Route::get('bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
+        Route::post('bookings/{booking}/approve', [AdminBookingController::class, 'approve'])->name('bookings.approve');
+        Route::post('bookings/{booking}/reject', [AdminBookingController::class, 'reject'])->name('bookings.reject');
+        Route::post('bookings/{booking}/cancel-recurrence', [AdminBookingController::class, 'cancelRecurrence'])->name('bookings.cancel-recurrence');
+        Route::delete('bookings/{booking}', [AdminBookingController::class, 'destroy'])->name('bookings.destroy');
+    });
+
+    // Admin only: user management
+    Route::middleware('admin')->group(function () {
+        Route::resource('users', AdminUserController::class)->except('show');
+    });
 });
