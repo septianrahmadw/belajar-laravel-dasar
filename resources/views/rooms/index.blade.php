@@ -44,8 +44,8 @@
                 <p class="text-sm text-gray-500">Isi form peminjaman seperti Google Booking. Pilih tanggal dan jam yang tersedia.</p>
             </div>
             <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>
+                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>
                 </div>
                 <h3 class="font-semibold text-gray-900 mb-1">Konfirmasi Instan</h3>
                 <p class="text-sm text-gray-500">Status booking langsung terlihat. Pantau persetujuan dan riwayat peminjaman Anda.</p>
@@ -85,7 +85,7 @@
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200">
             <div class="flex flex-col lg:flex-row">
                 <div class="lg:w-80 shrink-0">
-                    <div class="h-full bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 relative p-6 flex flex-col justify-between min-h-[200px] lg:min-h-0">
+                    <div class="h-full bg-gradient-to-br from-indigo-500 via-blue-500 to-indigo-600 relative p-6 flex flex-col justify-between min-h-[200px] lg:min-h-0">
                         <div class="absolute inset-0 opacity-10">
                             <svg class="w-full h-full" viewBox="0 0 400 300" fill="none"><rect x="30" y="20" width="70" height="50" rx="6" fill="white"/><rect x="120" y="20" width="70" height="50" rx="6" fill="white"/><rect x="210" y="20" width="70" height="50" rx="6" fill="white"/><rect x="300" y="20" width="70" height="50" rx="6" fill="white"/><rect x="30" y="90" width="70" height="50" rx="6" fill="white"/><rect x="120" y="90" width="70" height="50" rx="6" fill="white"/><rect x="210" y="90" width="70" height="50" rx="6" fill="white"/><rect x="300" y="90" width="70" height="50" rx="6" fill="white"/><rect x="30" y="160" width="70" height="50" rx="6" fill="white"/><rect x="120" y="160" width="70" height="50" rx="6" fill="white"/><rect x="210" y="160" width="70" height="50" rx="6" fill="white"/><rect x="300" y="160" width="70" height="50" rx="6" fill="white"/><rect x="20" y="230" width="360" height="30" rx="6" fill="white"/></svg>
                         </div>

@@ -16,8 +16,14 @@ class Booking extends Model
         'booker_name',
         'booker_email',
         'booker_phone',
-        'booker_nim',
+        'jurusan',
+        'prodi_id',
         'purpose',
+        'mata_kuliah',
+        'semester',
+        'kelas',
+        'dosen',
+        'teknisi',
         'date',
         'start_time',
         'end_time',
@@ -32,11 +38,17 @@ class Booking extends Model
         'date' => 'date',
         'is_recurring' => 'boolean',
         'recurrence_end_date' => 'date',
+        'semester' => 'integer',
     ];
 
     public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);
+    }
+
+    public function prodi(): BelongsTo
+    {
+        return $this->belongsTo(Prodi::class);
     }
 
     public function recurrenceBookings()

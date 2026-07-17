@@ -40,10 +40,36 @@
                             <span class="text-sm text-gray-700">{{ $booking->booker_phone }}</span>
                         </div>
                         @endif
-                        @if ($booking->booker_nim)
                         <div class="flex items-center gap-2">
                             <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" /></svg>
-                            <span class="text-sm text-gray-700">{{ $booking->booker_nim }}</span>
+                            <span class="text-sm text-gray-700">{{ $booking->jurusan }}</span>
+                        </div>
+                        @if ($booking->prodi)
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" /></svg>
+                            <span class="text-sm text-gray-700">{{ $booking->prodi->name }}</span>
+                        </div>
+                        @endif
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                            <span class="text-sm text-gray-700">{{ $booking->purpose }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                            <span class="text-sm text-gray-700">{{ $booking->mata_kuliah }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+                            <span class="text-sm text-gray-700">Semester {{ $booking->semester }} - Kelas {{ $booking->kelas }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                            <span class="text-sm text-gray-700">{{ $booking->dosen }}</span>
+                        </div>
+                        @if ($booking->teknisi)
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17l-5.384 3.18A1.5 1.5 0 014.5 17.09V5.91a1.5 1.5 0 011.536-1.26l5.384 3.18a1.5 1.5 0 010 2.58z" /></svg>
+                            <span class="text-sm text-gray-700">{{ $booking->teknisi }}</span>
                         </div>
                         @endif
                     </div>
@@ -78,20 +104,20 @@
             @if ($booking->is_recurring)
             <div>
                 <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Jadwal Berulang</h4>
-                <div class="bg-purple-50 rounded-lg p-4">
+                <div class="bg-blue-50 rounded-lg p-4">
                     <div class="flex items-center gap-2 mb-2">
-                        <svg class="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" /></svg>
-                        <span class="text-sm font-semibold text-purple-800">Booking Berulang Mingguan</span>
+                        <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" /></svg>
+                        <span class="text-sm font-semibold text-blue-800">Booking Berulang Mingguan</span>
                     </div>
-                    <p class="text-xs text-purple-600 mb-2">
+                    <p class="text-xs text-blue-600 mb-2">
                         Berakhir pada: {{ $booking->recurrence_end_date->format('d M Y') }}
                     </p>
                     @php $relatedBookings = $booking->recurrenceBookings; @endphp
                     @if ($relatedBookings->isNotEmpty())
                     <div class="mt-3 space-y-1">
-                        <p class="text-xs font-semibold text-purple-700">Jadwal lainnya:</p>
+                        <p class="text-xs font-semibold text-blue-700">Jadwal lainnya:</p>
                         @foreach ($relatedBookings as $related)
-                        <div class="flex items-center gap-2 text-xs {{ $related->status === 'cancelled' ? 'text-gray-400 line-through' : 'text-purple-700' }}">
+                        <div class="flex items-center gap-2 text-xs {{ $related->status === 'cancelled' ? 'text-gray-400 line-through' : 'text-blue-700' }}">
                             <span class="w-1.5 h-1.5 rounded-full {{ $related->status === 'approved' ? 'bg-green-500' : ($related->status === 'pending' ? 'bg-amber-400' : 'bg-gray-300') }}"></span>
                             {{ $related->date->format('d M Y') }} ({{ $related->dayName }})
                             <span class="font-mono">{{ $related->formatted_start_time }}-{{ $related->formatted_end_time }}</span>

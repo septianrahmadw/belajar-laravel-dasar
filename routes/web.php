@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminBookingController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminProdiController;
 use App\Http\Controllers\Admin\AdminRoomController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\BookingController;
@@ -31,6 +32,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::resource('rooms', AdminRoomController::class)->except('show');
         Route::post('rooms/{room}/toggle', [AdminRoomController::class, 'toggle'])->name('rooms.toggle');
+
+        Route::resource('prodis', AdminProdiController::class)->except('show');
+        Route::post('prodis/{prodi}/toggle', [AdminProdiController::class, 'toggle'])->name('prodis.toggle');
 
         Route::get('bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
         Route::get('bookings/export/pdf', [AdminBookingController::class, 'exportPdf'])->name('bookings.export.pdf');

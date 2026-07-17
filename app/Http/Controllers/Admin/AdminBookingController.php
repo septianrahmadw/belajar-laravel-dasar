@@ -14,7 +14,7 @@ class AdminBookingController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Booking::with('room');
+        $query = Booking::with('room', 'prodi');
 
         if ($status = $request->get('status')) {
             $query->where('status', $status);
@@ -25,7 +25,9 @@ class AdminBookingController extends Controller
                 $q->where('booker_name', 'like', "%{$search}%")
                   ->orWhere('booker_email', 'like', "%{$search}%")
                   ->orWhere('purpose', 'like', "%{$search}%")
-                  ->orWhere('booker_nim', 'like', "%{$search}%");
+                  ->orWhere('jurusan', 'like', "%{$search}%")
+                  ->orWhere('mata_kuliah', 'like', "%{$search}%")
+                  ->orWhere('dosen', 'like', "%{$search}%");
             });
         }
 
@@ -40,7 +42,7 @@ class AdminBookingController extends Controller
 
     public function show(Booking $booking)
     {
-        $booking->load('room');
+        $booking->load('room', 'prodi');
         return view('admin.bookings.show', compact('booking'));
     }
 
@@ -108,7 +110,7 @@ class AdminBookingController extends Controller
 
     public function exportPdf(Request $request)
     {
-        $query = Booking::with('room');
+        $query = Booking::with('room', 'prodi');
 
         if ($status = $request->get('status')) {
             $query->where('status', $status);
@@ -118,7 +120,9 @@ class AdminBookingController extends Controller
                 $q->where('booker_name', 'like', "%{$search}%")
                   ->orWhere('booker_email', 'like', "%{$search}%")
                   ->orWhere('purpose', 'like', "%{$search}%")
-                  ->orWhere('booker_nim', 'like', "%{$search}%");
+                  ->orWhere('jurusan', 'like', "%{$search}%")
+                  ->orWhere('mata_kuliah', 'like', "%{$search}%")
+                  ->orWhere('dosen', 'like', "%{$search}%");
             });
         }
         if ($date = $request->get('date')) {
@@ -139,7 +143,7 @@ class AdminBookingController extends Controller
 
     public function exportCsv(Request $request)
     {
-        $query = Booking::with('room');
+        $query = Booking::with('room', 'prodi');
 
         if ($status = $request->get('status')) {
             $query->where('status', $status);
@@ -149,7 +153,9 @@ class AdminBookingController extends Controller
                 $q->where('booker_name', 'like', "%{$search}%")
                   ->orWhere('booker_email', 'like', "%{$search}%")
                   ->orWhere('purpose', 'like', "%{$search}%")
-                  ->orWhere('booker_nim', 'like', "%{$search}%");
+                  ->orWhere('jurusan', 'like', "%{$search}%")
+                  ->orWhere('mata_kuliah', 'like', "%{$search}%")
+                  ->orWhere('dosen', 'like', "%{$search}%");
             });
         }
         if ($date = $request->get('date')) {
@@ -159,7 +165,7 @@ class AdminBookingController extends Controller
         $bookings = $query->orderByDesc('date')->orderByDesc('created_at')->get();
 
         $csv = Writer::createFromFileObject(new \SplTempFileObject());
-        $csv->insertOne(['No', 'Nama Peminjam', 'Email', 'No. HP', 'NIM', 'Ruangan', 'Tanggal', 'Jam Mulai', 'Jam Selesai', 'Keperluan', 'Status', 'Catatan', 'Diajukan Pada']);
+        $csv->insertOne(['No', 'Nama Peminjam', 'Email', 'No. HP', 'Jurusan', 'Prodi', 'Keperluan', 'Mata Kuliah', 'Semester', 'Kelas', 'Dosen', 'Teknisi', 'Ruangan', 'Tanggal', 'Jam Mulai', 'Jam Selesai', 'Status', 'Catatan', 'Diajukan Pada']);
 
         foreach ($bookings as $i => $b) {
             $csv->insertOne([
@@ -167,12 +173,18 @@ class AdminBookingController extends Controller
                 $b->booker_name,
                 $b->booker_email,
                 $b->booker_phone ?? '-',
-                $b->booker_nim ?? '-',
+                $b->jurusan ?? '-',
+                $b->prodi?->name ?? '-',
+                $b->purpose,
+                $b->mata_kuliah ?? '-',
+                $b->semester ?? '-',
+                $b->kelas ?? '-',
+                $b->dosen ?? '-',
+                $b->teknisi ?? '-',
                 $b->room->name,
                 $b->date->format('d/m/Y'),
                 $b->formatted_start_time,
                 $b->formatted_end_time,
-                $b->purpose,
                 $b->statusLabel,
                 $b->notes ?? '-',
                 $b->created_at->format('d/m/Y H:i'),

@@ -22,7 +22,7 @@
         <form action="{{ route('admin.bookings.index') }}" method="GET" class="flex flex-col sm:flex-row gap-3">
             <div class="flex-1 relative">
                 <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, email, NIM, keperluan..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, email, jurusan, mata kuliah, dosen..."
                        class="w-full rounded-lg border-gray-200 border pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
             </div>
             <input type="date" name="date" value="{{ request('date') }}"
@@ -48,10 +48,12 @@
             <thead>
                 <tr class="bg-gray-50 border-b border-gray-100">
                     <th class="text-left px-5 py-3 font-semibold text-gray-600">Peminjam</th>
+                    <th class="text-left px-5 py-3 font-semibold text-gray-600">Prodi</th>
                     <th class="text-left px-5 py-3 font-semibold text-gray-600">Ruangan</th>
                     <th class="text-left px-5 py-3 font-semibold text-gray-600">Tanggal</th>
                     <th class="text-left px-5 py-3 font-semibold text-gray-600">Waktu</th>
                     <th class="text-left px-5 py-3 font-semibold text-gray-600">Keperluan</th>
+                    <th class="text-left px-5 py-3 font-semibold text-gray-600">Mata Kuliah</th>
                     <th class="text-center px-5 py-3 font-semibold text-gray-600">Status</th>
                     <th class="text-right px-5 py-3 font-semibold text-gray-600">Aksi</th>
                 </tr>
@@ -63,11 +65,14 @@
                         <div class="font-medium text-gray-900">{{ $booking->booker_name }}</div>
                         <p class="text-xs text-gray-400">{{ $booking->booker_email }}</p>
                         @if ($booking->is_recurring)
-                        <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700">
+                        <span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">
                             <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" /></svg>
                             Berulang
                         </span>
                         @endif
+                    </td>
+                    <td class="px-5 py-4">
+                        <span class="text-gray-700">{{ $booking->prodi?->name ?? '-' }}</span>
                     </td>
                     <td class="px-5 py-4">
                         <span class="text-gray-700">{{ $booking->room->name }}</span>
@@ -80,6 +85,9 @@
                     </td>
                     <td class="px-5 py-4">
                         <span class="text-gray-700 line-clamp-1 max-w-[200px] block">{{ $booking->purpose }}</span>
+                    </td>
+                    <td class="px-5 py-4">
+                        <span class="text-gray-700 line-clamp-1 max-w-[200px] block">{{ $booking->mata_kuliah ?? '-' }}</span>
                     </td>
                     <td class="px-5 py-4 text-center">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide
@@ -113,7 +121,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="px-5 py-12 text-center">
+                    <td colspan="9" class="px-5 py-12 text-center">
                         <p class="text-gray-400">Tidak ada data booking ditemukan.</p>
                     </td>
                 </tr>

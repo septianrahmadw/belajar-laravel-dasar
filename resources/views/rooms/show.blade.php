@@ -14,7 +14,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2 space-y-6">
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="h-48 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 relative">
+                <div class="h-48 bg-gradient-to-br from-indigo-500 via-blue-500 to-indigo-600 relative">
                     <div class="absolute inset-0 opacity-15">
                         <svg class="w-full h-full" viewBox="0 0 800 200" fill="none"><rect x="50" y="30" width="80" height="55" rx="6" fill="white"/><rect x="160" y="30" width="80" height="55" rx="6" fill="white"/><rect x="270" y="30" width="80" height="55" rx="6" fill="white"/><rect x="380" y="30" width="80" height="55" rx="6" fill="white"/><rect x="490" y="30" width="80" height="55" rx="6" fill="white"/><rect x="600" y="30" width="80" height="55" rx="6" fill="white"/><rect x="50" y="110" width="80" height="55" rx="6" fill="white"/><rect x="160" y="110" width="80" height="55" rx="6" fill="white"/><rect x="270" y="110" width="80" height="55" rx="6" fill="white"/><rect x="380" y="110" width="80" height="55" rx="6" fill="white"/><rect x="490" y="110" width="80" height="55" rx="6" fill="white"/><rect x="600" y="110" width="80" height="55" rx="6" fill="white"/></svg>
                     </div>
@@ -171,7 +171,7 @@
 
         <div class="lg:col-span-1">
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden sticky top-24">
-                <div class="p-6 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-purple-50">
+                <div class="p-6 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-blue-50">
                     <h2 class="text-lg font-bold text-gray-900">Form Peminjaman</h2>
                     <p class="text-sm text-gray-500 mt-0.5">Isi data diri Anda untuk melakukan booking</p>
                 </div>
@@ -180,45 +180,114 @@
                     <input type="hidden" name="room_id" value="{{ $room->id }}">
 
                     <div>
-                        <label for="booker_name" class="block text-sm font-semibold text-gray-700 mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
+                        <label for="booker_name" class="block mb-2.5 text-sm font-semibold text-gray-900">Nama Lengkap <span class="text-red-500">*</span></label>
                         <input type="text" name="booker_name" id="booker_name" value="{{ old('booker_name') }}" required
-                               class="w-full rounded-xl border-gray-200 border px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
+                               class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm placeholder:text-gray-400"
                                placeholder="Masukkan nama lengkap">
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label for="booker_email" class="block text-sm font-semibold text-gray-700 mb-1.5">Email <span class="text-red-500">*</span></label>
-                            <input type="email" name="booker_email" id="booker_email" value="{{ old('booker_email') }}" required
-                                   class="w-full rounded-xl border-gray-200 border px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
-                                   placeholder="email@...">
-                        </div>
-                        <div>
-                            <label for="booker_nim" class="block text-sm font-semibold text-gray-700 mb-1.5">NIM / ID</label>
-                            <input type="text" name="booker_nim" id="booker_nim" value="{{ old('booker_nim') }}"
-                                   class="w-full rounded-xl border-gray-200 border px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
-                                   placeholder="NIM / ID">
-                        </div>
+                    <div>
+                        <label for="booker_email" class="block mb-2.5 text-sm font-semibold text-gray-900">Email <span class="text-red-500">*</span></label>
+                        <input type="email" name="booker_email" id="booker_email" value="{{ old('booker_email') }}" required
+                               class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm placeholder:text-gray-400"
+                               placeholder="email@...">
                     </div>
 
                     <div>
-                        <label for="booker_phone" class="block text-sm font-semibold text-gray-700 mb-1.5">No. WhatsApp</label>
-                        <input type="tel" name="booker_phone" id="booker_phone" value="{{ old('booker_phone') }}"
-                               class="w-full rounded-xl border-gray-200 border px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
+                        <label for="jurusan" class="block mb-2.5 text-sm font-semibold text-gray-900">Jurusan <span class="text-red-500">*</span></label>
+                        <select name="jurusan" id="jurusan" required
+                                class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                            <option value="">Pilih Jurusan</option>
+                            <option value="Budidaya Tanaman Pangan" {{ old('jurusan') === 'Budidaya Tanaman Pangan' ? 'selected' : '' }}>Budidaya Tanaman Pangan</option>
+                            <option value="Budidaya Tanaman Perkebunan" {{ old('jurusan') === 'Budidaya Tanaman Perkebunan' ? 'selected' : '' }}>Budidaya Tanaman Perkebunan</option>
+                            <option value="Teknologi Pertanian" {{ old('jurusan') === 'Teknologi Pertanian' ? 'selected' : '' }}>Teknologi Pertanian</option>
+                            <option value="Peternakan" {{ old('jurusan') === 'Peternakan' ? 'selected' : '' }}>Peternakan</option>
+                            <option value="Ekonomi dan Bisnis" {{ old('jurusan') === 'Ekonomi dan Bisnis' ? 'selected' : '' }}>Ekonomi dan Bisnis</option>
+                            <option value="Teknik" {{ old('jurusan') === 'Teknik' ? 'selected' : '' }}>Teknik</option>
+                            <option value="Perikanan dan Kelautan" {{ old('jurusan') === 'Perikanan dan Kelautan' ? 'selected' : '' }}>Perikanan dan Kelautan</option>
+                            <option value="Teknologi Informasi" {{ old('jurusan') === 'Teknologi Informasi' ? 'selected' : '' }}>Teknologi Informasi</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="prodi_id" class="block mb-2.5 text-sm font-semibold text-gray-900">Program Studi <span class="text-red-500">*</span></label>
+                        <select name="prodi_id" id="prodi_id" required
+                                class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                            <option value="">Pilih Prodi</option>
+                            @foreach ($prodis as $prodi)
+                            <option value="{{ $prodi->id }}" data-jurusan="{{ $prodi->jurusan }}" {{ old('prodi_id') == $prodi->id ? 'selected' : '' }}>
+                                {{ $prodi->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="booker_phone" class="block mb-2.5 text-sm font-semibold text-gray-900">No. WhatsApp <span class="text-red-500">*</span></label>
+                        <input type="tel" name="booker_phone" id="booker_phone" value="{{ old('booker_phone') }}" required
+                               class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm placeholder:text-gray-400"
                                placeholder="08xxxxxxxxxx">
                     </div>
 
                     <div>
-                        <label for="purpose" class="block text-sm font-semibold text-gray-700 mb-1.5">Keperluan <span class="text-red-500">*</span></label>
-                        <input type="text" name="purpose" id="purpose" value="{{ old('purpose') }}" required
-                               class="w-full rounded-xl border-gray-200 border px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
-                               placeholder="Contoh: Praktikum Pemrograman Web">
+                        <label for="purpose" class="block mb-2.5 text-sm font-semibold text-gray-900">Keperluan <span class="text-red-500">*</span></label>
+                        <select name="purpose" id="purpose" required
+                                class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                            <option value="">Pilih Keperluan</option>
+                            <option value="Kuliah" {{ old('purpose') === 'Kuliah' ? 'selected' : '' }}>Kuliah</option>
+                            <option value="Praktikum" {{ old('purpose') === 'Praktikum' ? 'selected' : '' }}>Praktikum</option>
+                        </select>
                     </div>
 
                     <div>
-                        <label for="date" class="block text-sm font-semibold text-gray-700 mb-1.5">Tanggal <span class="text-red-500">*</span></label>
+                        <label for="mata_kuliah" class="block mb-2.5 text-sm font-semibold text-gray-900">Mata Kuliah <span class="text-red-500">*</span></label>
+                        <input type="text" name="mata_kuliah" id="mata_kuliah" value="{{ old('mata_kuliah') }}" required
+                               class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm placeholder:text-gray-400"
+                               placeholder="Contoh: Pemrograman Web">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="semester" class="block mb-2.5 text-sm font-semibold text-gray-900">Semester <span class="text-red-500">*</span></label>
+                            <select name="semester" id="semester" required
+                                    class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                                <option value="">Pilih</option>
+                                @for ($s = 1; $s <= 6; $s++)
+                                    <option value="{{ $s }}" {{ old('semester') == $s ? 'selected' : '' }}>Semester {{ $s }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div>
+                            <label for="kelas" class="block mb-2.5 text-sm font-semibold text-gray-900">Kelas <span class="text-red-500">*</span></label>
+                            <select name="kelas" id="kelas" required
+                                    class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                                <option value="">Pilih</option>
+                                <option value="A" {{ old('kelas') === 'A' ? 'selected' : '' }}>Kelas A</option>
+                                <option value="B" {{ old('kelas') === 'B' ? 'selected' : '' }}>Kelas B</option>
+                                <option value="C" {{ old('kelas') === 'C' ? 'selected' : '' }}>Kelas C</option>
+                                <option value="D" {{ old('kelas') === 'D' ? 'selected' : '' }}>Kelas D</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="dosen" class="block mb-2.5 text-sm font-semibold text-gray-900">Dosen <span class="text-red-500">*</span></label>
+                        <input type="text" name="dosen" id="dosen" value="{{ old('dosen') }}" required
+                               class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm placeholder:text-gray-400"
+                               placeholder="Nama dosen pengampu">
+                    </div>
+
+                    <div>
+                        <label for="teknisi" class="block mb-2.5 text-sm font-semibold text-gray-900">Teknisi (Opsional)</label>
+                        <input type="text" name="teknisi" id="teknisi" value="{{ old('teknisi') }}"
+                               class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm placeholder:text-gray-400"
+                               placeholder="Nama teknisi (jika ada)">
+                    </div>
+
+                    <div>
+                        <label for="date" class="block mb-2.5 text-sm font-semibold text-gray-900">Tanggal <span class="text-red-500">*</span></label>
                         <input type="date" name="date" id="date" value="{{ old('date', $date) }}" required min="{{ now()->format('Y-m-d') }}"
-                               class="w-full rounded-xl border-gray-200 border px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow">
+                               class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
                     </div>
 
                     <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
@@ -241,7 +310,7 @@
                                 <input type="date" name="recurrence_end_date" id="recurrence_end_date"
                                        value="{{ old('recurrence_end_date') }}"
                                        min="{{ now()->format('Y-m-d') }}"
-                                       class="w-full rounded-xl border-gray-200 border px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow">
+                                       class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
                                 <p class="text-[11px] text-gray-400 mt-1">Maksimal 12 minggu (3 bulan)</p>
                             </div>
                             <div id="recurrence-preview" class="hidden bg-indigo-50 rounded-lg p-3">
@@ -253,9 +322,9 @@
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label for="start_time" class="block text-sm font-semibold text-gray-700 mb-1.5">Jam Mulai <span class="text-red-500">*</span></label>
+                            <label for="start_time" class="block mb-2.5 text-sm font-semibold text-gray-900">Jam Mulai <span class="text-red-500">*</span></label>
                             <select name="start_time" id="start_time" required
-                                    class="w-full rounded-xl border-gray-200 border px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow bg-white">
+                                    class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
                                 <option value="">Pilih jam</option>
                                 @for ($h = 7; $h <= 17; $h++)
                                     <option value="{{ sprintf('%02d:00', $h) }}" {{ old('start_time') === sprintf('%02d:00', $h) ? 'selected' : '' }}>
@@ -265,9 +334,9 @@
                             </select>
                         </div>
                         <div>
-                            <label for="end_time" class="block text-sm font-semibold text-gray-700 mb-1.5">Jam Selesai <span class="text-red-500">*</span></label>
+                            <label for="end_time" class="block mb-2.5 text-sm font-semibold text-gray-900">Jam Selesai <span class="text-red-500">*</span></label>
                             <select name="end_time" id="end_time" required
-                                    class="w-full rounded-xl border-gray-200 border px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow bg-white">
+                                    class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
                                 <option value="">Pilih jam</option>
                                 @for ($h = 8; $h <= 18; $h++)
                                     <option value="{{ sprintf('%02d:00', $h) }}" {{ old('end_time') === sprintf('%02d:00', $h) ? 'selected' : '' }}>
@@ -286,9 +355,9 @@
                     </div>
 
                     <div>
-                        <label for="notes" class="block text-sm font-semibold text-gray-700 mb-1.5">Catatan (Opsional)</label>
+                        <label for="notes" class="block mb-2.5 text-sm font-semibold text-gray-900">Catatan (Opsional)</label>
                         <textarea name="notes" id="notes" rows="3"
-                                  class="w-full rounded-xl border-gray-200 border px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow resize-none"
+                                  class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm placeholder:text-gray-400 resize-none"
                                   placeholder="Tulis catatan jika diperlukan...">{{ old('notes') }}</textarea>
                     </div>
 
@@ -326,8 +395,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const recurrenceDayDisplay = document.getElementById('recurrence-day-display');
     const recurrencePreview = document.getElementById('recurrence-preview');
     const recurrenceDates = document.getElementById('recurrence-dates');
+    const jurusanSelect = document.getElementById('jurusan');
+    const prodiSelect = document.getElementById('prodi_id');
 
     const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+
+    function filterProdi() {
+        const selectedJurusan = jurusanSelect.value;
+        const options = prodiSelect.querySelectorAll('option[data-jurusan]');
+        let hasVisible = false;
+
+        prodiSelect.value = '';
+
+        options.forEach(function(opt) {
+            if (!selectedJurusan || opt.dataset.jurusan === selectedJurusan) {
+                opt.style.display = '';
+                hasVisible = true;
+            } else {
+                opt.style.display = 'none';
+            }
+        });
+
+        const placeholder = prodiSelect.querySelector('option[value=""]');
+        if (placeholder) {
+            placeholder.style.display = '';
+        }
+    }
+
+    jurusanSelect.addEventListener('change', filterProdi);
+    filterProdi();
 
     function checkConflict() {
         const date = dateInput.value;

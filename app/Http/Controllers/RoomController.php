@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Prodi;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -117,7 +118,9 @@ class RoomController extends Controller
             $timeSlots[] = sprintf('%02d:00', $hour);
         }
 
-        return view('rooms.show', compact('room', 'date', 'bookings', 'weekDates', 'timeSlots', 'carbonDate'));
+        $prodis = Prodi::where('is_active', true)->orderBy('jurusan')->orderBy('name')->get();
+
+        return view('rooms.show', compact('room', 'date', 'bookings', 'weekDates', 'timeSlots', 'carbonDate', 'prodis'));
     }
 
     public function schedule(Room $room, Request $request)

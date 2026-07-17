@@ -63,7 +63,12 @@
                     <tr><td>Lokasi</td><td>{{ $booking->room->location }}</td></tr>
                     <tr><td>Tanggal</td><td>{{ $booking->date->format('l, d M Y') }}</td></tr>
                     <tr><td>Waktu</td><td>{{ $booking->formatted_start_time }} - {{ $booking->formatted_end_time }}</td></tr>
+                    <tr><td>Jurusan</td><td>{{ $booking->jurusan }}</td></tr>
+                    <tr><td>Prodi</td><td>{{ $booking->prodi?->name ?? '-' }}</td></tr>
                     <tr><td>Keperluan</td><td>{{ $booking->purpose }}</td></tr>
+                    <tr><td>Mata Kuliah</td><td>{{ $booking->mata_kuliah }}</td></tr>
+                    <tr><td>Semester / Kelas</td><td>Semester {{ $booking->semester }} - Kelas {{ $booking->kelas }}</td></tr>
+                    <tr><td>Dosen</td><td>{{ $booking->dosen }}</td></tr>
                     <tr><td>Status</td><td><span class="badge badge-{{ $booking->status }}">{{ $statusText }}</span></td></tr>
                 </table>
             </div>
