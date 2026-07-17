@@ -285,7 +285,7 @@
                     </div>
 
                     <div>
-                        <label for="date" class="block mb-2.5 text-sm font-semibold text-gray-900">Tanggal <span class="text-red-500">*</span></label>
+                        <label for="date" class="block mb-2.5 text-sm font-semibold text-gray-900">Tanggal Mulai <span class="text-red-500">*</span></label>
                         <input type="date" name="date" id="date" value="{{ old('date', $date) }}" required min="{{ now()->format('Y-m-d') }}"
                                class="block w-full px-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
                     </div>
