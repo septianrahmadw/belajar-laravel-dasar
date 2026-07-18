@@ -11,7 +11,7 @@
                 Sistem Peminjaman Ruangan
             </div>
             <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
-                Peminjaman <span class="text-indigo-600">Lab Komputer SFS New</span>
+                Peminjaman <span class="text-indigo-600">Lab Komputer SFS</span>
             </h1>
             <p class="text-lg text-gray-500 leading-relaxed">
                 Lihat ketersediaan ruangan laboratorium secara real-time dan lakukan peminjaman secara online. Cepat, mudah, dan transparan.
