@@ -120,7 +120,27 @@ class RoomController extends Controller
 
         $prodis = Prodi::where('is_active', true)->orderBy('jurusan')->orderBy('name')->get();
 
-        return view('rooms.show', compact('room', 'date', 'bookings', 'weekDates', 'timeSlots', 'carbonDate', 'prodis'));
+        $monthStart = $carbonDate->copy()->startOfMonth()->startOfWeek(Carbon::MONDAY);
+        $monthEnd = $carbonDate->copy()->endOfMonth()->endOfWeek(Carbon::SUNDAY);
+        $monthBookings = $room->bookings()
+            ->whereBetween('date', [$monthStart->format('Y-m-d'), $monthEnd->format('Y-m-d')])
+            ->whereNotIn('status', ['rejected', 'cancelled'])
+            ->orderBy('date')
+            ->orderBy('start_time')
+            ->get()
+            ->groupBy('date')
+            ->map(function ($items) {
+                return $items->map(fn ($b) => [
+                    'date' => $b->date,
+                    'start' => $b->formatted_start_time,
+                    'end' => $b->formatted_end_time,
+                    'purpose' => $b->purpose,
+                    'booker_name' => $b->booker_name,
+                    'status' => $b->status,
+                ]);
+            });
+
+        return view('rooms.show', compact('room', 'date', 'bookings', 'weekDates', 'timeSlots', 'carbonDate', 'prodis', 'monthBookings'));
     }
 
     public function schedule(Room $room, Request $request)
