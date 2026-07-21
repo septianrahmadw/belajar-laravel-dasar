@@ -161,8 +161,53 @@ class RoomController extends Controller
                 'end_time' => $b->end_time,
                 'purpose' => $b->purpose,
                 'booker_name' => $b->booker_name,
+                'booker_email' => $b->booker_email,
+                'booker_phone' => $b->booker_phone,
+                'jurusan' => $b->jurusan,
+                'prodi' => $b->prodi->name ?? '-',
+                'mata_kuliah' => $b->mata_kuliah,
+                'semester' => $b->semester,
+                'kelas' => $b->kelas,
+                'dosen' => $b->dosen,
+                'teknisi' => $b->teknisi,
                 'status' => $b->status,
             ]),
+        ]);
+    }
+
+    public function checkAvailability(Room $room, Request $request)
+    {
+        $request->validate([
+            'date' => 'required|date',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+        ]);
+
+        $isAvailable = $room->isAvailableForTime(
+            $request->date,
+            $request->start_time,
+            $request->end_time
+        );
+
+        $conflictingBookings = [];
+        if (!$isAvailable) {
+            $conflictingBookings = $room->bookings()
+                ->whereDate('date', $request->date)
+                ->whereIn('status', ['approved', 'pending'])
+                ->where('start_time', '<', $request->end_time)
+                ->where('end_time', '>', $request->start_time)
+                ->get()
+                ->map(fn ($b) => [
+                    'start' => $b->formatted_start_time,
+                    'end' => $b->formatted_end_time,
+                    'status' => $b->status,
+                    'purpose' => $b->purpose,
+                ]);
+        }
+
+        return response()->json([
+            'available' => $isAvailable,
+            'conflicts' => $conflictingBookings,
         ]);
     }
 }

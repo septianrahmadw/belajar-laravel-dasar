@@ -42,7 +42,7 @@ class Room extends Model
     {
         $query = $this->bookings()
             ->whereDate('date', $date)
-            ->where('status', 'approved')
+            ->whereIn('status', ['approved', 'pending'])
             ->where(function ($q) use ($startTime, $endTime) {
                 $q->where('start_time', '<', $endTime)
                   ->where('end_time', '>', $startTime);
