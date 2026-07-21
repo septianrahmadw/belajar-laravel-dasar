@@ -128,7 +128,7 @@ class RoomController extends Controller
             ->orderBy('date')
             ->orderBy('start_time')
             ->get()
-            ->groupBy('date')
+            ->groupBy(fn ($b) => Carbon::parse($b->date)->format('Y-m-d'))
             ->map(function ($items) {
                 return $items->map(fn ($b) => [
                     'date' => $b->date,

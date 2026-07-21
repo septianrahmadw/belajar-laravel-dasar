@@ -53,7 +53,7 @@ export default function CalendarWidget({ initialDate, selectedDate: externalSele
     const startDay = firstDay.getDay();
     const startOffset = startDay === 0 ? 6 : startDay - 1;
 
-    const monthLabel = calendarDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+    const monthLabel = calendarDate.toLocaleDateString('id-ID', { month: 'long' });
 
     const cells = [];
     for (let i = 0; i < startOffset; i++) {
@@ -68,46 +68,59 @@ export default function CalendarWidget({ initialDate, selectedDate: externalSele
         const isSelected = dateStr === selectedDate;
         const dayBookings = monthBookings[dateStr] || [];
 
-        let cls = 'relative w-full aspect-square rounded-lg text-xs font-semibold transition-all ';
+        let btnCls = 'w-full rounded-lg text-xs font-semibold transition-all ';
         if (isPast) {
-            cls += 'text-gray-300 cursor-not-allowed ';
+            btnCls += 'text-gray-300 cursor-not-allowed ';
         } else if (isSelected) {
-            cls += 'bg-indigo-600 text-white shadow-md ';
+            btnCls += 'bg-indigo-600 text-white shadow-md ';
         } else {
-            cls += 'text-gray-700 hover:bg-gray-100 ';
+            btnCls += 'text-gray-700 hover:bg-gray-100 ';
         }
 
-        if (dayBookings.length > 0 && !isSelected) {
+        let badgeCls = '';
+        let approvedBadgeCls = '';
+        let pendingBadgeCls = '';
+        if (dayBookings.length > 0) {
             const approvedCount = dayBookings.filter(b => b.status === 'approved').length;
             const pendingCount = dayBookings.filter(b => b.status === 'pending').length;
-            if (approvedCount > 0 && pendingCount === 0) {
-                cls += 'bg-green-100 text-green-800 font-bold ';
-            } else if (pendingCount > 0 && approvedCount === 0) {
-                cls += 'bg-amber-100 text-amber-800 font-bold ';
-            } else {
-                cls += 'bg-gradient-to-br from-green-100 to-amber-100 text-gray-800 font-bold ';
+            if (!isSelected) {
+                if (approvedCount > 0 && pendingCount === 0) {
+                    btnCls += 'bg-green-100 text-green-800 font-bold ';
+                } else if (pendingCount > 0 && approvedCount === 0) {
+                    btnCls += 'bg-amber-100 text-amber-800 font-bold ';
+                } else {
+                    btnCls += 'bg-gradient-to-br from-green-100 to-amber-100 text-gray-800 font-bold ';
+                }
             }
+            approvedBadgeCls = 'bg-green-500 text-white';
+            pendingBadgeCls = 'bg-amber-400 text-white';
         }
 
-        const hasApproved = dayBookings.some(b => b.status === 'approved');
-        const hasPending = dayBookings.some(b => b.status === 'pending');
-
         cells.push(
-            <button
-                key={dateStr}
-                type="button"
-                disabled={isPast}
-                className={cls}
-                onClick={() => handleSelectDate(dateStr)}
-            >
-                {d}
+            <div key={dateStr} className="aspect-square flex flex-col items-center justify-start pt-1.5">
+                <button
+                    type="button"
+                    disabled={isPast}
+                    className={btnCls}
+                    onClick={() => handleSelectDate(dateStr)}
+                >
+                    {d}
+                </button>
                 {dayBookings.length > 0 && (
-                    <div className="flex justify-center gap-1 mt-1">
-                        {hasApproved && <span className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-sm" />}
-                        {hasPending && <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-sm" />}
+                    <div className="mt-0.5 flex items-center justify-center gap-0.5">
+                        {dayBookings.filter(b => b.status === 'approved').length > 0 && (
+                            <span className={`min-w-[14px] h-3.5 flex items-center justify-center rounded text-[8px] font-bold leading-none px-0.5 ${approvedBadgeCls}`}>
+                                {dayBookings.filter(b => b.status === 'approved').length}
+                            </span>
+                        )}
+                        {dayBookings.filter(b => b.status === 'pending').length > 0 && (
+                            <span className={`min-w-[14px] h-3.5 flex items-center justify-center rounded text-[8px] font-bold leading-none px-0.5 ${pendingBadgeCls}`}>
+                                {dayBookings.filter(b => b.status === 'pending').length}
+                            </span>
+                        )}
                     </div>
                 )}
-            </button>
+            </div>
         );
     }
 
@@ -133,7 +146,10 @@ export default function CalendarWidget({ initialDate, selectedDate: externalSele
                     <button type="button" onClick={() => navigateMonth(-1)} className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
                         <ChevronLeft />
                     </button>
-                    <h3 className="text-base font-bold text-gray-900">{monthLabel}</h3>
+                    <div className="text-center">
+                        <h3 className="text-base font-bold text-gray-900">{monthLabel}</h3>
+                        <p className="text-xs text-gray-500 font-medium">{dayName}, {formattedDate}</p>
+                    </div>
                     <button type="button" onClick={() => navigateMonth(1)} className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
                         <ChevronRight />
                     </button>
@@ -151,19 +167,16 @@ export default function CalendarWidget({ initialDate, selectedDate: externalSele
 
                 <div className="flex items-center justify-center gap-4 mt-3 pt-3 border-t border-gray-100">
                     <span className="inline-flex items-center gap-1.5 text-[11px] text-gray-500">
-                        <span className="w-2 h-2 rounded-full bg-green-500" /> Disetujui
+                        <span className="w-2.5 h-2.5 rounded-full bg-green-500" /> Disetujui
                     </span>
                     <span className="inline-flex items-center gap-1.5 text-[11px] text-gray-500">
-                        <span className="w-2 h-2 rounded-full bg-amber-500" /> Menunggu
+                        <span className="w-2.5 h-2.5 rounded-full bg-amber-400" /> Menunggu
                     </span>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-gray-100 text-center">
-                    <p className="text-sm font-bold text-gray-900">{dayName}, {formattedDate}</p>
-                    {selectedBookings.length === 0 ? (
-                        <p className="text-xs text-green-600 mt-1 font-medium">Tidak ada jadwal &middot; Tersedia</p>
-                    ) : (
-                        <div className="mt-2 space-y-1">
+                <div className="mt-4 pt-3 border-t border-gray-100">
+                    {selectedBookings.length > 0 && (
+                        <div className="space-y-1">
                             {selectedBookings.map((b, i) => {
                                 const isApproved = b.status === 'approved';
                                 return (
