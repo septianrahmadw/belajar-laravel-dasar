@@ -41,6 +41,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('bookings/export/pdf', [AdminBookingController::class, 'exportPdf'])->name('bookings.export.pdf');
         Route::get('bookings/export/csv', [AdminBookingController::class, 'exportCsv'])->name('bookings.export.csv');
         Route::get('bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
+        Route::get('bookings/{booking}/edit', [AdminBookingController::class, 'edit'])->name('bookings.edit');
+        Route::put('bookings/{booking}', [AdminBookingController::class, 'update'])->name('bookings.update');
         Route::post('bookings/{booking}/approve', [AdminBookingController::class, 'approve'])->name('bookings.approve');
         Route::post('bookings/{booking}/reject', [AdminBookingController::class, 'reject'])->name('bookings.reject');
         Route::post('bookings/{booking}/cancel-recurrence', [AdminBookingController::class, 'cancelRecurrence'])->name('bookings.cancel-recurrence');

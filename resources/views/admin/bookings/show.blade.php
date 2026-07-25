@@ -158,6 +158,17 @@
             </form>
         </div>
         @endif
+
+        @if (in_array($booking->status, ['approved', 'pending']))
+        <div class="p-6 border-t border-gray-100 bg-indigo-50/50 flex items-center gap-3 justify-end">
+            <a href="{{ route('admin.bookings.edit', $booking) }}" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                </svg>
+                Edit / Pindahkan Jadwal
+            </a>
+        </div>
+        @endif
     </div>
 
     <div class="mt-4">

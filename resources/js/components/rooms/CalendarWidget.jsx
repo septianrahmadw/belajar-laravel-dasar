@@ -130,10 +130,10 @@ export default function CalendarWidget({ initialDate, selectedDate: externalSele
     const formattedDate = selectedDateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden sticky top-24">
-            <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-blue-50">
-                <h2 className="text-lg font-bold text-gray-900">Kalender</h2>
-                <p className="text-sm text-gray-500 mt-0.5">Lihat jadwal sebulan penuh</p>
+        <div className="bg-white/60 backdrop-blur-lg rounded-2xl border border-white/40 shadow-lg overflow-hidden sticky top-24">
+            <div className="p-4 border-b border-white/30 bg-white/20 backdrop-blur-xl">
+                <h2 className="text-xl font-extrabold text-gray-900 text-center">Kalender</h2>
+                <p className="text-sm text-gray-600 mt-0.5 text-center">Lihat jadwal sebulan penuh</p>
                 {actionButton && (
                     <div className="mt-3">
                         {actionButton}

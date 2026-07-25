@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\BookingCreated;
 use App\Mail\BookingStatusChanged;
 use App\Models\Booking;
+use App\Models\Room;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use League\Csv\Writer;
@@ -63,6 +64,68 @@ class AdminBookingController extends Controller
         \Mail::to($booking->booker_email)->send(new BookingStatusChanged($booking, $oldStatus));
 
         return back()->with('success', 'Booking berhasil disetujui.');
+    }
+
+    public function edit(Booking $booking)
+    {
+        $booking->load('room', 'prodi');
+
+        if (!in_array($booking->status, ['approved', 'pending'])) {
+            return back()->withErrors(['error' => 'Hanya booking dengan status disetujui atau menunggu yang dapat diedit.']);
+        }
+
+        $rooms = Room::where('is_active', true)->orderBy('name')->get();
+        $timeSlots = $this->getTimeSlots();
+
+        return view('admin.bookings.edit', compact('booking', 'rooms', 'timeSlots'));
+    }
+
+    public function update(Request $request, Booking $booking)
+    {
+        if (!in_array($booking->status, ['approved', 'pending'])) {
+            return back()->withErrors(['error' => 'Hanya booking dengan status disetujui atau menunggu yang dapat diedit.']);
+        }
+
+        $validated = $request->validate([
+            'room_id' => 'required|exists:rooms,id',
+            'date' => 'required|date|after_or_equal:today',
+            'start_time' => 'required',
+            'end_time' => 'required|after:start_time',
+        ]);
+
+        $room = Room::findOrFail($validated['room_id']);
+        if (!$room->isAvailableForTime($validated['date'], $validated['start_time'], $validated['end_time'], $booking->id)) {
+            return back()->withErrors(['error' => 'Waktu dan ruangan sudah terpakai oleh booking lain. Silakan pilih waktu atau ruangan lain.'])
+                ->withInput();
+        }
+
+        $oldDate = $booking->date->format('d M Y');
+        $oldTime = $booking->formatted_start_time . ' - ' . $booking->formatted_end_time;
+        $oldRoom = $booking->room->name;
+
+        $booking->update([
+            'room_id' => $validated['room_id'],
+            'date' => $validated['date'],
+            'start_time' => $validated['start_time'],
+            'end_time' => $validated['end_time'],
+        ]);
+
+        $booking->load('room');
+
+        \Mail::to($booking->booker_email)->send(new BookingStatusChanged($booking, $booking->status));
+
+        return redirect()->route('admin.bookings.show', $booking)
+            ->with('success', "Booking berhasil dipindahkan dari {$oldRoom} ({$oldDate}, {$oldTime}) ke {$booking->room->name} ({$booking->date->format('d M Y')}, {$booking->formatted_start_time} - {$booking->formatted_end_time}).");
+    }
+
+    private function getTimeSlots(): array
+    {
+        $slots = [];
+        for ($h = 7; $h <= 21; $h++) {
+            $slots[] = sprintf('%02d:00', $h);
+            $slots[] = sprintf('%02d:30', $h);
+        }
+        return $slots;
     }
 
     public function reject(Booking $booking)

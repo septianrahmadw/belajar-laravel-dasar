@@ -75,7 +75,7 @@ export default function RoomShowApp({ room, currentDate, monthBookings, prodis, 
 
 function RoomHeader({ room }) {
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white/50 backdrop-blur-xl rounded-2xl border border-white/40 shadow-lg overflow-hidden">
             <div className="h-48 bg-gradient-to-br from-indigo-500 via-blue-500 to-indigo-600 relative">
                 <div className="absolute inset-0 opacity-15">
                     <svg className="w-full h-full" viewBox="0 0 800 200" fill="none">
@@ -100,10 +100,10 @@ function RoomHeader({ room }) {
                     <h1 className="text-3xl font-bold text-white drop-shadow-lg">{room.name}</h1>
                 </div>
             </div>
-            <div className="p-6">
+            <div className="p-6 bg-white/20 backdrop-blur-sm">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
+                        <div className="w-10 h-10 bg-white/30 backdrop-blur-sm rounded-lg flex items-center justify-center">
                             <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
@@ -115,7 +115,7 @@ function RoomHeader({ room }) {
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                        <div className="w-10 h-10 bg-white/30 backdrop-blur-sm rounded-lg flex items-center justify-center">
                             <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                             </svg>

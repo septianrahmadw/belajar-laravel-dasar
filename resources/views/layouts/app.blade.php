@@ -19,8 +19,8 @@
         .time-grid-cell:hover { background-color: #e0e7ff; }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen font-sans antialiased">
-    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+<body class="min-h-screen font-sans antialiased bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-100">
+    <nav class="bg-white/60 backdrop-blur-lg border-b border-white/40 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
@@ -76,7 +76,7 @@
         @yield('content')
     </main>
 
-    <footer class="mt-16 border-t border-gray-200 bg-white">
+    <footer class="mt-16 border-t border-white/40 bg-white/60 backdrop-blur-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-2">
