@@ -48,10 +48,29 @@
     </nav>
 
     @if (session('success'))
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <div class="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
-            <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <p class="text-sm text-green-700 font-medium">{{ session('success') }}</p>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4" id="announcement-alert">
+        <div class="bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-2xl p-5 shadow-lg shadow-emerald-100/50">
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                    <svg class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-sm font-bold text-emerald-800">Booking Berhasil Diajukan!</h3>
+                    <p class="text-sm text-emerald-700 mt-1">{{ session('success') }}</p>
+                    <div class="mt-3 p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-emerald-100">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+                            <p class="text-xs text-emerald-700">
+                                <span class="font-semibold">Detail booking telah dikirim ke email Anda.</span> 
+                                Cek status booking di menu <a href="{{ route('bookings.my') }}" class="font-bold text-emerald-600 underline decoration-emerald-300 hover:text-emerald-800 transition-colors">"Booking Saya"</a> dengan email yang digunakan saat pengajuan.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('announcement-alert').remove()" class="text-emerald-400 hover:text-emerald-600 transition-colors shrink-0 mt-0.5">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
         </div>
     </div>
     @endif

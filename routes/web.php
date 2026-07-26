@@ -15,12 +15,23 @@ Route::get('/', [RoomController::class, 'index'])->name('home');
 Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
 Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
 Route::get('/rooms/{room}/schedule', [RoomController::class, 'schedule'])->name('rooms.schedule');
-Route::get('/rooms/{room}/check-availability', [RoomController::class, 'checkAvailability'])->name('rooms.check-availability');
+Route::get('/rooms/{room}/check-availability', [RoomController::class, 'checkAvailability'])
+    ->middleware('throttle:availability-check')
+    ->name('rooms.check-availability');
 
-Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
+Route::post('/bookings', [BookingController::class, 'store'])
+    ->middleware('throttle:booking-create')
+    ->name('bookings.store');
+
 Route::get('/my-bookings', [BookingController::class, 'myBookings'])->name('bookings.my');
-Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
-Route::post('/bookings/{booking}/cancel-recurrence', [BookingController::class, 'cancelRecurrence'])->name('bookings.cancel-recurrence');
+
+Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])
+    ->middleware('throttle:booking-action')
+    ->name('bookings.cancel');
+
+Route::post('/bookings/{booking}/cancel-recurrence', [BookingController::class, 'cancelRecurrence'])
+    ->middleware('throttle:booking-action')
+    ->name('bookings.cancel-recurrence');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');

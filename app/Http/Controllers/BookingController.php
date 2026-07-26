@@ -11,8 +11,37 @@ use Illuminate\Support\Str;
 
 class BookingController extends Controller
 {
+    private function isBot(): bool
+    {
+        if (request()->input('website_url') !== null && request()->input('website_url') !== '') {
+            return true;
+        }
+
+        $openedAt = request()->input('opened_at');
+        if ($openedAt) {
+            $elapsed = time() - (int) $openedAt;
+            if ($elapsed < 3) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function botResponse()
+    {
+        $room = Room::where('is_active', true)->first();
+        return redirect()
+            ->route('rooms.show', $room)
+            ->with('success', 'Booking berhasil diajukan! Menunggu persetujuan admin.');
+    }
+
     public function store(Request $request)
     {
+        if ($this->isBot()) {
+            return $this->botResponse();
+        }
+
         $validated = $request->validate([
             'room_id' => 'required|exists:rooms,id',
             'booker_name' => 'required|string|max:255',
@@ -84,7 +113,7 @@ class BookingController extends Controller
             $count = count($bookingsCreated);
             return redirect()
                 ->route('rooms.show', $room)
-                ->with('success', "Booking berulang berhasil diajukan! {$count} jadwal akan menunggu persetujuan admin.");
+                ->with('success', "{$count} jadwal booking berulang berhasil diajukan dan menunggu persetujuan admin. Silakan cek status booking di menu \"Booking Saya\" menggunakan email {$validated['booker_email']}.");
 
         } else {
             if (!$room->isAvailableForTime($validated['date'], $validated['start_time'], $validated['end_time'])) {
@@ -99,7 +128,7 @@ class BookingController extends Controller
 
             return redirect()
                 ->route('rooms.show', $room)
-                ->with('success', 'Booking berhasil diajukan! Menunggu persetujuan admin.');
+                ->with('success', "Booking ruangan {$room->name} untuk tanggal {$booking->date->format('d M Y')} jam {$booking->formatted_start_time} - {$booking->formatted_end_time} berhasil diajukan. Silakan cek status booking di menu \"Booking Saya\" menggunakan email {$booking->booker_email}.");
         }
     }
 

@@ -76,28 +76,9 @@ export default function RoomShowApp({ room, currentDate, monthBookings, prodis, 
 function RoomHeader({ room }) {
     return (
         <div className="bg-white/50 backdrop-blur-xl rounded-2xl border border-white/40 shadow-lg overflow-hidden">
-            <div className="h-48 bg-gradient-to-br from-indigo-500 via-blue-500 to-indigo-600 relative">
-                <div className="absolute inset-0 opacity-15">
-                    <svg className="w-full h-full" viewBox="0 0 800 200" fill="none">
-                        <rect x="50" y="30" width="80" height="55" rx="6" fill="white"/>
-                        <rect x="160" y="30" width="80" height="55" rx="6" fill="white"/>
-                        <rect x="270" y="30" width="80" height="55" rx="6" fill="white"/>
-                        <rect x="380" y="30" width="80" height="55" rx="6" fill="white"/>
-                        <rect x="490" y="30" width="80" height="55" rx="6" fill="white"/>
-                        <rect x="600" y="30" width="80" height="55" rx="6" fill="white"/>
-                        <rect x="50" y="110" width="80" height="55" rx="6" fill="white"/>
-                        <rect x="160" y="110" width="80" height="55" rx="6" fill="white"/>
-                        <rect x="270" y="110" width="80" height="55" rx="6" fill="white"/>
-                        <rect x="380" y="110" width="80" height="55" rx="6" fill="white"/>
-                        <rect x="490" y="110" width="80" height="55" rx="6" fill="white"/>
-                        <rect x="600" y="110" width="80" height="55" rx="6" fill="white"/>
-                    </svg>
-                </div>
-                <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold">
-                    {room.code}
-                </div>
-                <div className="absolute bottom-4 left-4 right-4">
-                    <h1 className="text-3xl font-bold text-white drop-shadow-lg">{room.name}</h1>
+            <div className="h-24 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-t-2xl relative">
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <h1 className="text-4xl font-bold text-white drop-shadow-lg">{room.name}</h1>
                 </div>
             </div>
             <div className="p-6 bg-white/20 backdrop-blur-sm">

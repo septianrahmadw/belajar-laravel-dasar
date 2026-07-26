@@ -59,6 +59,25 @@
                 <p style="font-size:13px;color:#555;background:#f9fafb;padding:10px;border-radius:6px;">{{ $booking->notes }}</p>
             </div>
             @endif
+
+            <div style="background:linear-gradient(135deg,#ecfdf5,#f0fdf4);border:1px solid #bbf7d0;border-radius:12px;padding:20px;margin-top:20px;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                    <div style="width:32px;height:32px;background:#bbf7d0;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                        <span style="font-size:16px;">📋</span>
+                    </div>
+                    <h3 style="margin:0;font-size:14px;font-weight:700;color:#166534;">Cek Status Booking Anda</h3>
+                </div>
+                <p style="margin:0 0 12px;font-size:13px;color:#15803d;line-height:1.6;">
+                    Anda dapat memantau status booking (disetujui/ditolak/dibatalkan) melalui menu <strong>"Booking Saya"</strong> di website LabBooking.
+                </p>
+                <div style="background:#fff;border:1px solid #d1fae5;border-radius:8px;padding:12px;margin-bottom:12px;">
+                    <p style="margin:0;font-size:12px;color:#666;">Email yang digunakan untuk login:</p>
+                    <p style="margin:4px 0 0;font-size:14px;font-weight:600;color:#166534;">{{ $booking->booker_email }}</p>
+                </div>
+                <a href="{{ route('bookings.my') }}?email={{ urlencode($booking->booker_email) }}" style="display:inline-block;background:#16a34a;color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;">
+                    Lihat Booking Saya →
+                </a>
+            </div>
         </div>
         <div class="footer">
             Email ini dikirim otomatis oleh sistem LabBooking.<br>
