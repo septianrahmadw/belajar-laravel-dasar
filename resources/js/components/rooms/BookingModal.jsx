@@ -78,7 +78,7 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
             const end = new Date(form.recurrence_end_date + 'T00:00:00');
             const dates = [];
             let current = new Date(start);
-            while (current <= end && dates.length < 12) {
+            while (current <= end && dates.length < 16) {
                 dates.push(new Date(current));
                 current.setDate(current.getDate() + 7);
             }
@@ -228,7 +228,7 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
                                     <div>
                                         <DatePickerField label="Berakhir pada" required value={form.recurrence_end_date} name="recurrence_end_date"
                                             onChange={handleChange} min={new Date().toISOString().split('T')[0]} />
-                                        <p className="text-[11px] text-gray-400 mt-1">Maksimal 12 minggu (3 bulan)</p>
+                                        <p className="text-[11px] text-gray-400 mt-1">Maksimal 16 minggu (4 bulan)</p>
                                     </div>
                                     {showRecurrencePreview && (
                                         <div className="bg-indigo-50 rounded-lg p-3">

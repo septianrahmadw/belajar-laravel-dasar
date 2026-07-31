@@ -71,9 +71,9 @@ class BookingController extends Controller
             $endDate = \Carbon\Carbon::parse($validated['recurrence_end_date']);
 
             $totalWeeks = $startDate->diffInWeeks($endDate) + 1;
-            if ($totalWeeks > 12) {
+            if ($totalWeeks > 16) {
                 return back()->withErrors([
-                    'recurrence_end_date' => 'Maksimal perulangan adalah 12 minggu (3 bulan).',
+                    'recurrence_end_date' => 'Maksimal perulangan adalah 16 minggu (4 bulan).',
                 ])->withInput();
             }
 
