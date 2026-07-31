@@ -16,7 +16,7 @@ const JURUSAN_OPTIONS = [
 const TIME_SLOTS_START = Array.from({ length: 11 }, (_, i) => String(i + 7).padStart(2, '0') + ':00');
 const TIME_SLOTS_END = Array.from({ length: 11 }, (_, i) => String(i + 8).padStart(2, '0') + ':00');
 
-export default function BookingModal({ isOpen, onClose, roomId, currentDate, prodis, monthBookings }) {
+export default function BookingModal({ isOpen, onClose, roomId, currentDate, prodis }) {
     const [form, setForm] = useState({
         booker_name: '',
         booker_email: '',
@@ -42,6 +42,13 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
     const [conflicts, setConflicts] = useState([]);
     const [recurrenceDates, setRecurrenceDates] = useState([]);
     const [showRecurrencePreview, setShowRecurrencePreview] = useState(false);
+    const [openedAt, setOpenedAt] = useState(0);
+
+    useEffect(() => {
+        if (isOpen) {
+            setOpenedAt(Math.floor(Date.now() / 1000));
+        }
+    }, [isOpen]);
 
     useEffect(() => {
         if (!form.jurusan) {
@@ -132,7 +139,7 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
                         <input type="text" name="website_url" tabIndex="-1" autoComplete="off"
                             style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0 }}
                             aria-hidden="true" />
-                        <input type="hidden" name="opened_at" value={Math.floor(Date.now() / 1000)} />
+                        <input type="hidden" name="opened_at" value={openedAt} />
 
                         <div className="grid grid-cols-2 gap-3">
                             <FloatingField label="Nama Lengkap" required value={form.booker_name}>

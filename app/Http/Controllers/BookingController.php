@@ -20,7 +20,7 @@ class BookingController extends Controller
         $openedAt = request()->input('opened_at');
         if ($openedAt) {
             $elapsed = time() - (int) $openedAt;
-            if ($elapsed < 3) {
+            if ($elapsed < 1) {
                 return true;
             }
         }
@@ -112,7 +112,7 @@ class BookingController extends Controller
 
             $count = count($bookingsCreated);
             return redirect()
-                ->route('rooms.show', $room)
+                ->route('rooms.show', ['room' => $room, 'date' => $bookingsCreated[0]->date->format('Y-m-d')])
                 ->with('success', "{$count} jadwal booking berulang berhasil diajukan dan menunggu persetujuan admin. Silakan cek status booking di menu \"Booking Saya\" menggunakan email {$validated['booker_email']}.");
 
         } else {
@@ -127,7 +127,7 @@ class BookingController extends Controller
             Mail::to($booking->booker_email)->send(new BookingCreated($booking));
 
             return redirect()
-                ->route('rooms.show', $room)
+                ->route('rooms.show', ['room' => $room, 'date' => $booking->date->format('Y-m-d')])
                 ->with('success', "Booking ruangan {$room->name} untuk tanggal {$booking->date->format('d M Y')} jam {$booking->formatted_start_time} - {$booking->formatted_end_time} berhasil diajukan. Silakan cek status booking di menu \"Booking Saya\" menggunakan email {$booking->booker_email}.");
         }
     }

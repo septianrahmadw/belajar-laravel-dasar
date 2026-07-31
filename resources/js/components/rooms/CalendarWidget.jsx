@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 const DAY_NAMES = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 const DAY_HEADERS = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
@@ -12,9 +12,33 @@ function parseDateStr(s) {
     return new Date(y, m - 1, d);
 }
 
-export default function CalendarWidget({ initialDate, selectedDate: externalSelectedDate, monthBookings, onSelectDate, actionButton }) {
+export default function CalendarWidget({ roomId, initialDate, selectedDate: externalSelectedDate, initialMonthBookings, onSelectDate, actionButton }) {
     const [calendarDate, setCalendarDate] = useState(() => parseDateStr(initialDate));
     const [selectedDate, setSelectedDate] = useState(initialDate);
+    const [monthBookings, setMonthBookings] = useState(initialMonthBookings || {});
+    const monthCache = useRef(initialDate ? { [initialDate.substring(0, 7)]: initialMonthBookings || {} } : {});
+
+    const year = calendarDate.getFullYear();
+    const month = calendarDate.getMonth();
+    const monthStr = year + '-' + String(month + 1).padStart(2, '0');
+
+    useEffect(() => {
+        let cancelled = false;
+        if (monthCache.current[monthStr]) {
+            setMonthBookings(monthCache.current[monthStr]);
+            return undefined;
+        }
+        fetch(`/rooms/${roomId}/month?month=${monthStr}`)
+            .then(r => r.json())
+            .then(data => {
+                if (cancelled) return;
+                const bookings = data.bookings || {};
+                monthCache.current[monthStr] = bookings;
+                setMonthBookings(bookings);
+            })
+            .catch(() => {});
+        return () => { cancelled = true; };
+    }, [roomId, monthStr]);
 
     useEffect(() => {
         if (externalSelectedDate && externalSelectedDate !== selectedDate) {
@@ -46,8 +70,6 @@ export default function CalendarWidget({ initialDate, selectedDate: externalSele
         onSelectDate(dateStr);
     }, [onSelectDate, today]);
 
-    const year = calendarDate.getFullYear();
-    const month = calendarDate.getMonth();
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const startDay = firstDay.getDay();

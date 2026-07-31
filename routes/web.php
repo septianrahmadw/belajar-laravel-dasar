@@ -15,6 +15,7 @@ Route::get('/', [RoomController::class, 'index'])->name('home');
 Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
 Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
 Route::get('/rooms/{room}/schedule', [RoomController::class, 'schedule'])->name('rooms.schedule');
+Route::get('/rooms/{room}/month', [RoomController::class, 'monthSchedule'])->name('rooms.month-schedule');
 Route::get('/rooms/{room}/check-availability', [RoomController::class, 'checkAvailability'])
     ->middleware('throttle:availability-check')
     ->name('rooms.check-availability');

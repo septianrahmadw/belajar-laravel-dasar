@@ -175,6 +175,41 @@ class RoomController extends Controller
         ]);
     }
 
+    public function monthSchedule(Room $room, Request $request)
+    {
+        $request->validate([
+            'month' => 'required|date_format:Y-m',
+        ]);
+
+        $carbonMonth = Carbon::parse($request->month . '-01');
+
+        $monthStart = $carbonMonth->copy()->startOfMonth()->startOfWeek(Carbon::MONDAY);
+        $monthEnd = $carbonMonth->copy()->endOfMonth()->endOfWeek(Carbon::SUNDAY);
+
+        $monthBookings = $room->bookings()
+            ->whereBetween('date', [$monthStart->format('Y-m-d'), $monthEnd->format('Y-m-d')])
+            ->whereNotIn('status', ['rejected', 'cancelled'])
+            ->orderBy('date')
+            ->orderBy('start_time')
+            ->get()
+            ->groupBy(fn ($b) => Carbon::parse($b->date)->format('Y-m-d'))
+            ->map(function ($items) {
+                return $items->map(fn ($b) => [
+                    'date' => $b->date,
+                    'start' => $b->formatted_start_time,
+                    'end' => $b->formatted_end_time,
+                    'purpose' => $b->purpose,
+                    'booker_name' => $b->booker_name,
+                    'status' => $b->status,
+                ]);
+            });
+
+        return response()->json([
+            'month' => $request->month,
+            'bookings' => $monthBookings,
+        ]);
+    }
+
     public function checkAvailability(Room $room, Request $request)
     {
         $request->validate([

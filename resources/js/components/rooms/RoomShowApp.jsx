@@ -53,9 +53,10 @@ export default function RoomShowApp({ room, currentDate, monthBookings, prodis, 
                                 Ajukan Peminjaman
                             </button>
                         }
+                        roomId={room.id}
                         initialDate={currentDate}
                         selectedDate={selectedDate}
-                        monthBookings={monthBookings}
+                        initialMonthBookings={monthBookings}
                         onSelectDate={handleSelectDate}
                     />
                 </div>
@@ -67,7 +68,6 @@ export default function RoomShowApp({ room, currentDate, monthBookings, prodis, 
                 roomId={room.id}
                 currentDate={selectedDate}
                 prodis={prodis}
-                monthBookings={monthBookings}
             />
         </div>
     );
