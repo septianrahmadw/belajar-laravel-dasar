@@ -35,7 +35,7 @@ export default function WeekBar({ selectedDate, onSelectDate }) {
         const isPast = d < today;
         const isTodayDate = d.getTime() === today.getTime();
 
-        let cls = 'flex flex-col items-center px-2 py-1.5 rounded-lg text-center transition-all min-w-0 ';
+        let cls = 'flex flex-col items-center justify-center px-2 sm:px-3 py-2.5 rounded-lg text-center transition-all min-w-0 ';
         if (isActive) {
             cls += 'bg-indigo-600 text-white shadow-md ';
         } else if (isPast) {
@@ -52,8 +52,8 @@ export default function WeekBar({ selectedDate, onSelectDate }) {
                 className={cls}
                 onClick={() => onSelectDate(dateStr)}
             >
-                <span className="text-[9px] font-bold uppercase">{dayName}</span>
-                <span className="text-sm font-bold leading-tight">{dayNum}</span>
+                <span className="text-[10px] font-bold uppercase">{dayName}</span>
+                <span className="text-base font-bold leading-tight mt-0.5">{dayNum}</span>
                 {isTodayDate && !isActive && <span className="w-1 h-1 rounded-full bg-indigo-500 mt-0.5" />}
                 {isTodayDate && isActive && <span className="w-1 h-1 rounded-full bg-white mt-0.5" />}
             </button>

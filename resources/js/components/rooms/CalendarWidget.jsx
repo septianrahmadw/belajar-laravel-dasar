@@ -90,7 +90,7 @@ export default function CalendarWidget({ roomId, initialDate, selectedDate: exte
         const isSelected = dateStr === selectedDate;
         const dayBookings = monthBookings[dateStr] || [];
 
-        let btnCls = 'w-full rounded-lg text-xs font-semibold transition-all ';
+        let btnCls = 'w-full h-full flex flex-col items-center justify-center gap-0.5 rounded-lg text-sm font-bold transition-all ';
         if (isPast) {
             btnCls += 'text-gray-300 cursor-not-allowed ';
         } else if (isSelected) {
@@ -119,29 +119,29 @@ export default function CalendarWidget({ roomId, initialDate, selectedDate: exte
         }
 
         cells.push(
-            <div key={dateStr} className="aspect-square flex flex-col items-center justify-start pt-1.5">
+            <div key={dateStr} className="aspect-square p-0.5">
                 <button
                     type="button"
                     disabled={isPast}
                     className={btnCls}
                     onClick={() => handleSelectDate(dateStr)}
                 >
-                    {d}
+                    <span className="leading-none">{d}</span>
+                    {dayBookings.length > 0 && (
+                        <span className="flex items-center justify-center gap-0.5">
+                            {dayBookings.filter(b => b.status === 'approved').length > 0 && (
+                                <span className={`min-w-[14px] h-3.5 flex items-center justify-center rounded text-[8px] font-bold leading-none px-0.5 ${approvedBadgeCls}`}>
+                                    {dayBookings.filter(b => b.status === 'approved').length}
+                                </span>
+                            )}
+                            {dayBookings.filter(b => b.status === 'pending').length > 0 && (
+                                <span className={`min-w-[14px] h-3.5 flex items-center justify-center rounded text-[8px] font-bold leading-none px-0.5 ${pendingBadgeCls}`}>
+                                    {dayBookings.filter(b => b.status === 'pending').length}
+                                </span>
+                            )}
+                        </span>
+                    )}
                 </button>
-                {dayBookings.length > 0 && (
-                    <div className="mt-0.5 flex items-center justify-center gap-0.5">
-                        {dayBookings.filter(b => b.status === 'approved').length > 0 && (
-                            <span className={`min-w-[14px] h-3.5 flex items-center justify-center rounded text-[8px] font-bold leading-none px-0.5 ${approvedBadgeCls}`}>
-                                {dayBookings.filter(b => b.status === 'approved').length}
-                            </span>
-                        )}
-                        {dayBookings.filter(b => b.status === 'pending').length > 0 && (
-                            <span className={`min-w-[14px] h-3.5 flex items-center justify-center rounded text-[8px] font-bold leading-none px-0.5 ${pendingBadgeCls}`}>
-                                {dayBookings.filter(b => b.status === 'pending').length}
-                            </span>
-                        )}
-                    </div>
-                )}
             </div>
         );
     }
