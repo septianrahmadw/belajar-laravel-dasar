@@ -7,6 +7,7 @@
         .container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
         .header { padding: 24px 30px; color: #fff; }
         .header.approved { background: #059669; }
+        .header.pending { background: #2563eb; }
         .header.rejected { background: #dc2626; }
         .header.cancelled { background: #6b7280; }
         .header h1 { margin: 0; font-size: 20px; font-weight: 600; }
@@ -14,6 +15,7 @@
         .body { padding: 30px; }
         .info-box { border-left: 4px solid; padding: 16px; border-radius: 0 8px 8px 0; margin-bottom: 20px; }
         .info-box.approved { background: #ecfdf5; border-color: #059669; }
+        .info-box.pending { background: #eff6ff; border-color: #2563eb; }
         .info-box.rejected { background: #fef2f2; border-color: #dc2626; }
         .info-box.cancelled { background: #f3f4f6; border-color: #6b7280; }
         .info-box p { margin: 4px 0; font-size: 13px; color: #333; }
@@ -25,6 +27,7 @@
         .detail td:first-child { font-weight: 600; color: #333; width: 140px; }
         .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
         .badge-approved { background: #d1fae5; color: #065f46; }
+        .badge-pending { background: #dbeafe; color: #1e40af; }
         .badge-rejected { background: #fee2e2; color: #991b1b; }
         .badge-cancelled { background: #e5e7eb; color: #374151; }
         .footer { background: #f9fafb; padding: 20px 30px; text-align: center; font-size: 11px; color: #999; border-top: 1px solid #eee; }
@@ -40,6 +43,7 @@
         };
         $messages = [
             'approved' => 'Booking Anda telah disetujui oleh admin. Anda dapat menggunakan ruangan sesuai jadwal yang telah ditentukan.',
+            'pending' => 'Booking Anda telah diperbarui oleh admin. Silakan periksa kembali jadwal peminjaman Anda.',
             'rejected' => 'Maaf, booking Anda tidak dapat disetujui oleh admin. Silakan hubungi admin untuk informasi lebih lanjut.',
             'cancelled' => 'Booking Anda telah dibatalkan. Jika ada pertanyaan, silakan hubungi admin.',
         ];
@@ -53,7 +57,7 @@
         <div class="body">
             <div class="info-box {{ $booking->status }}">
                 <p>Halo <strong>{{ $booking->booker_name }}</strong>,</p>
-                <p>{{ $messages[$booking->status] }}</p>
+                <p>{{ $messages[$booking->status] ?? $messages['pending'] }}</p>
             </div>
 
             <div class="detail">
