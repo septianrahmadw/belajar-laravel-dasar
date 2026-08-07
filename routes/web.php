@@ -25,6 +25,12 @@ Route::post('/bookings', [BookingController::class, 'store'])
     ->name('bookings.store');
 
 Route::get('/my-bookings', [BookingController::class, 'myBookings'])->name('bookings.my');
+Route::post('/my-bookings/send-pin', [BookingController::class, 'sendPin'])
+    ->middleware('throttle:booking-pin-send')
+    ->name('bookings.verify.send');
+Route::post('/my-bookings/verify-pin', [BookingController::class, 'verifyPin'])
+    ->middleware('throttle:booking-pin-verify')
+    ->name('bookings.verify.pin');
 
 Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])
     ->middleware('throttle:booking-action')

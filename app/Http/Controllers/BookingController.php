@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Mail\BookingCreated;
+use App\Mail\BookingPin;
+use App\Mail\BookingStatusChanged;
 use App\Models\Booking;
+use App\Models\BookingAccessToken;
 use App\Models\Room;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -31,6 +35,7 @@ class BookingController extends Controller
     private function botResponse()
     {
         $room = Room::where('is_active', true)->first();
+
         return redirect()
             ->route('rooms.show', $room)
             ->with('success', 'Booking berhasil diajukan! Menunggu persetujuan admin.');
@@ -64,11 +69,11 @@ class BookingController extends Controller
         ]);
 
         $room = Room::findOrFail($validated['room_id']);
-        $isRecurring = !empty($validated['is_recurring']);
+        $isRecurring = ! empty($validated['is_recurring']);
 
         if ($isRecurring) {
-            $startDate = \Carbon\Carbon::parse($validated['date']);
-            $endDate = \Carbon\Carbon::parse($validated['recurrence_end_date']);
+            $startDate = Carbon::parse($validated['date']);
+            $endDate = Carbon::parse($validated['recurrence_end_date']);
 
             $totalWeeks = $startDate->diffInWeeks($endDate) + 1;
             if ($totalWeeks > 16) {
@@ -83,7 +88,7 @@ class BookingController extends Controller
             $currentDate = $startDate->copy();
 
             while ($currentDate <= $endDate) {
-                if (!$room->isAvailableForTime($currentDate->format('Y-m-d'), $validated['start_time'], $validated['end_time'])) {
+                if (! $room->isAvailableForTime($currentDate->format('Y-m-d'), $validated['start_time'], $validated['end_time'])) {
                     $conflictDate = $currentDate->format('d M Y');
                     break;
                 }
@@ -111,12 +116,13 @@ class BookingController extends Controller
             Mail::to($validated['booker_email'])->send(new BookingCreated($bookingsCreated[0]));
 
             $count = count($bookingsCreated);
+
             return redirect()
                 ->route('rooms.show', ['room' => $room, 'date' => $bookingsCreated[0]->date->format('Y-m-d')])
                 ->with('success', "{$count} jadwal booking berulang berhasil diajukan dan menunggu persetujuan admin. Silakan cek status booking di menu \"Booking Saya\" menggunakan email {$validated['booker_email']}.");
 
         } else {
-            if (!$room->isAvailableForTime($validated['date'], $validated['start_time'], $validated['end_time'])) {
+            if (! $room->isAvailableForTime($validated['date'], $validated['start_time'], $validated['end_time'])) {
                 return back()->withErrors([
                     'schedule' => 'Ruangan sudah terbooking pada waktu yang dipilih. Silakan pilih waktu lain.',
                 ])->withInput();
@@ -134,10 +140,28 @@ class BookingController extends Controller
 
     public function myBookings(Request $request)
     {
-        $email = $request->get('email');
+        if ($request->query('logout')) {
+            session()->forget(['booking_verified_email', 'booking_verified_at', 'booking_pin_email']);
 
-        if (!$email) {
-            return view('bookings.my-bookings', ['bookings' => collect(), 'email' => null]);
+            return redirect()->route('bookings.my');
+        }
+
+        $email = session('booking_verified_email');
+        $verifiedAt = session('booking_verified_at');
+
+        $verified = $email
+            && $verifiedAt
+            && Carbon::parse($verifiedAt)->addMinutes(30)->isFuture();
+
+        if (! $verified) {
+            session()->forget(['booking_verified_email', 'booking_verified_at']);
+
+            return view('bookings.my-bookings', [
+                'bookings' => collect(),
+                'email' => null,
+                'pinEmail' => session('booking_pin_email'),
+                'verified' => false,
+            ]);
         }
 
         $bookings = Booking::where('booker_email', $email)
@@ -146,11 +170,121 @@ class BookingController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        return view('bookings.my-bookings', compact('bookings', 'email'));
+        return view('bookings.my-bookings', compact('bookings', 'email') + [
+            'pinEmail' => null,
+            'verified' => true,
+        ]);
+    }
+
+    public function sendPin(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|max:255',
+        ]);
+
+        $email = mb_strtolower($validated['email']);
+
+        if (Booking::where('booker_email', $email)->exists()) {
+            BookingAccessToken::where('email', $email)->delete();
+
+            $pin = (string) random_int(100000, 999999);
+
+            BookingAccessToken::create([
+                'email' => $email,
+                'pin_hash' => hash('sha256', $pin),
+                'expires_at' => now()->addMinutes(10),
+            ]);
+
+            try {
+                Mail::to($email)->send(new BookingPin($email, $pin));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Gagal mengirim kode verifikasi booking', [
+                    'email' => $email,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+
+            session()->put('booking_pin_email', $email);
+        } else {
+            session()->forget('booking_pin_email');
+        }
+
+        return redirect()
+            ->route('bookings.my')
+            ->with('success', 'Jika email tersebut terdaftar pada booking, kode verifikasi telah dikirim. Silakan cek kotak masuk (atau folder spam) email Anda.')
+            ->with('success_title', 'Kode Verifikasi Terkirim');
+    }
+
+    public function verifyPin(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|max:255',
+            'pin' => 'required|string|size:6',
+        ]);
+
+        $email = mb_strtolower($validated['email']);
+
+        $record = BookingAccessToken::where('email', $email)
+            ->whereNull('used_at')
+            ->where('expires_at', '>', now())
+            ->latest()
+            ->first();
+
+        if (! $record) {
+            return back()->withErrors([
+                'pin' => 'Kode tidak ditemukan atau sudah kedaluwarsa. Silakan minta kode baru.',
+            ])->withInput();
+        }
+
+        if ($record->attempts >= 5) {
+            $record->delete();
+
+            session()->forget('booking_pin_email');
+
+            return back()->withErrors([
+                'pin' => 'Terlalu banyak percobaan salah. Kode telah dinonaktifkan, silakan minta kode baru.',
+            ])->withInput();
+        }
+
+        if (! hash_equals($record->pin_hash, hash('sha256', $validated['pin']))) {
+            $record->increment('attempts');
+            $remaining = 5 - $record->fresh()->attempts;
+
+            return back()->withErrors([
+                'pin' => "Kode salah. Sisa {$remaining} percobaan.",
+            ])->withInput();
+        }
+
+        $record->update(['used_at' => now()]);
+
+        session([
+            'booking_verified_email' => $record->email,
+            'booking_verified_at' => now(),
+        ]);
+        session()->forget('booking_pin_email');
+
+        return redirect()->route('bookings.my');
+    }
+
+    private function assertBookingOwner(Booking $booking): void
+    {
+        $email = session('booking_verified_email');
+        $verifiedAt = session('booking_verified_at');
+
+        $verified = $email
+            && $verifiedAt
+            && $email === $booking->booker_email
+            && Carbon::parse($verifiedAt)->addMinutes(30)->isFuture();
+
+        if (! $verified) {
+            abort(403);
+        }
     }
 
     public function cancel(Booking $booking)
     {
+        $this->assertBookingOwner($booking);
+
         if ($booking->status !== 'pending' && $booking->status !== 'approved') {
             return back()->withErrors(['error' => 'Booking tidak dapat dibatalkan.']);
         }
@@ -158,14 +292,17 @@ class BookingController extends Controller
         $oldStatus = $booking->status;
         $booking->update(['status' => 'cancelled']);
 
-        Mail::to($booking->booker_email)->send(new \App\Mail\BookingStatusChanged($booking, $oldStatus));
+        Mail::to($booking->booker_email)->send(new BookingStatusChanged($booking, $oldStatus));
 
-        return back()->with('success', 'Booking berhasil dibatalkan.');
+        return back()->with('success', 'Booking berhasil dibatalkan.')
+            ->with('success_title', 'Booking Dibatalkan');
     }
 
     public function cancelRecurrence(Booking $booking)
     {
-        if (!$booking->recurrence_id) {
+        $this->assertBookingOwner($booking);
+
+        if (! $booking->recurrence_id) {
             return back()->withErrors(['error' => 'Booking ini bukan bagian dari jadwal berulang.']);
         }
 
@@ -176,9 +313,10 @@ class BookingController extends Controller
         foreach ($recurrenceBookings as $recBooking) {
             $oldStatus = $recBooking->status;
             $recBooking->update(['status' => 'cancelled']);
-            Mail::to($recBooking->booker_email)->send(new \App\Mail\BookingStatusChanged($recBooking, $oldStatus));
+            Mail::to($recBooking->booker_email)->send(new BookingStatusChanged($recBooking, $oldStatus));
         }
 
-        return back()->with('success', 'Semua jadwal berulang berhasil dibatalkan.');
+        return back()->with('success', 'Semua jadwal berulang berhasil dibatalkan.')
+            ->with('success_title', 'Booking Dibatalkan');
     }
 }

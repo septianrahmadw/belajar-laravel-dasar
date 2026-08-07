@@ -71,10 +71,10 @@
                     Anda dapat memantau status booking (disetujui/ditolak/dibatalkan) melalui menu <strong>"Booking Saya"</strong> di website LabBooking.
                 </p>
                 <div style="background:#fff;border:1px solid #d1fae5;border-radius:8px;padding:12px;margin-bottom:12px;">
-                    <p style="margin:0;font-size:12px;color:#666;">Email yang digunakan untuk login:</p>
+                    <p style="margin:0;font-size:12px;color:#666;">Untuk keamanan, Anda akan menerima kode verifikasi di email ini saat ingin melihat status booking:</p>
                     <p style="margin:4px 0 0;font-size:14px;font-weight:600;color:#166534;">{{ $booking->booker_email }}</p>
                 </div>
-                <a href="{{ route('bookings.my') }}?email={{ urlencode($booking->booker_email) }}" style="display:inline-block;background:#16a34a;color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;">
+                <a href="{{ route('bookings.my') }}" style="display:inline-block;background:#16a34a;color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;">
                     Lihat Booking Saya →
                 </a>
             </div>
