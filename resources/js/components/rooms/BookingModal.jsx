@@ -33,7 +33,7 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
         start_time: '',
         end_time: '',
         is_recurring: false,
-        recurrence_end_date: '',
+        recurrence_count: '',
         notes: '',
     });
 
@@ -80,14 +80,14 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
     }, [form.date, form.start_time, form.end_time, roomId]);
 
     useEffect(() => {
-        if (form.is_recurring && form.date && form.recurrence_end_date) {
+        if (form.is_recurring && form.date && form.recurrence_count) {
             const start = new Date(form.date + 'T00:00:00');
-            const end = new Date(form.recurrence_end_date + 'T00:00:00');
+            const count = Number(form.recurrence_count);
             const dates = [];
-            let current = new Date(start);
-            while (current <= end && dates.length < 16) {
-                dates.push(new Date(current));
-                current.setDate(current.getDate() + 7);
+            for (let i = 0; i < count; i++) {
+                const d = new Date(start);
+                d.setDate(start.getDate() + i * 7);
+                dates.push(d);
             }
             setRecurrenceDates(dates);
             setShowRecurrencePreview(dates.length > 0);
@@ -95,7 +95,7 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
             setRecurrenceDates([]);
             setShowRecurrencePreview(false);
         }
-    }, [form.is_recurring, form.date, form.recurrence_end_date]);
+    }, [form.is_recurring, form.date, form.recurrence_count]);
 
     const handleChange = useCallback((e) => {
         const { name, value, type, checked } = e.target;
@@ -112,6 +112,14 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
     }, [showConflict]);
 
     const recurrenceDay = form.date ? DAY_NAMES[new Date(form.date + 'T00:00:00').getDay()] : '-';
+
+    const recurrenceEndDate = form.is_recurring && form.date && form.recurrence_count
+        ? (() => {
+            const start = new Date(form.date + 'T00:00:00');
+            start.setDate(start.getDate() + (Number(form.recurrence_count) - 1) * 7);
+            return `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-${String(start.getDate()).padStart(2, '0')}`;
+        })()
+        : '';
 
     if (!isOpen) return null;
 
@@ -215,6 +223,7 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
                             onChange={handleChange} min={new Date().toISOString().split('T')[0]} />
 
                         <input type="hidden" name="is_recurring" value="0" />
+                        <input type="hidden" name="recurrence_end_date" value={recurrenceEndDate} />
                         <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
                             <label className="flex items-center gap-3 cursor-pointer">
                                 <input type="checkbox" name="is_recurring" value="1" checked={form.is_recurring} onChange={handleChange}
@@ -233,9 +242,15 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
                                         <span className="font-semibold text-gray-900">{recurrenceDay} ({form.date ? (() => { const [y, m, d] = form.date.split('-'); return `${d}/${m}/${y}`; })() : '-'})</span>
                                     </div>
                                     <div>
-                                        <DatePickerField label="Berakhir pada" required value={form.recurrence_end_date} name="recurrence_end_date"
-                                            onChange={handleChange} min={new Date().toISOString().split('T')[0]} />
-                                        <p className="text-[11px] text-gray-400 mt-1">Maksimal 16 minggu (4 bulan)</p>
+                                        <FloatingField label="Jumlah Perulangan" required value={form.recurrence_count} isDropdown>
+                                            <select name="recurrence_count" value={form.recurrence_count} onChange={handleChange} required className={inputCls}>
+                                                <option value="" disabled hidden></option>
+                                                {Array.from({ length: 16 }, (_, i) => i + 1).map(n => (
+                                                    <option key={n} value={n}>{n}x</option>
+                                                ))}
+                                            </select>
+                                        </FloatingField>
+                                        <p className="text-[11px] text-gray-400 mt-1">Maksimal 16x (16 minggu / 4 bulan)</p>
                                     </div>
                                     {showRecurrencePreview && (
                                         <div className="bg-indigo-50 rounded-lg p-3">
