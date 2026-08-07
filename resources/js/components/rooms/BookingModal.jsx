@@ -205,7 +205,7 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
                             <FloatingField label="Kelas" required value={form.kelas} isDropdown>
                                 <select name="kelas" value={form.kelas} onChange={handleChange} required className={inputCls}>
                                     <option value="" disabled hidden></option>
-                                    {['A','B','C','D'].map(k => <option key={k} value={k}>Kelas {k}</option>)}
+                                    {['A','B','C','D','E'].map(k => <option key={k} value={k}>Kelas {k}</option>)}
                                 </select>
                             </FloatingField>
                             <FloatingField label="Dosen" required value={form.dosen}>

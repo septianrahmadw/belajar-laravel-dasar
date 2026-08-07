@@ -57,7 +57,7 @@ class BookingController extends Controller
             'purpose' => 'required|in:Kuliah,Praktikum',
             'mata_kuliah' => 'required|string|max:255',
             'semester' => 'required|integer|min:1|max:6',
-            'kelas' => 'required|in:A,B,C,D',
+            'kelas' => 'required|in:A,B,C,D,E',
             'dosen' => 'required|string|max:255',
             'teknisi' => 'nullable|string|max:255',
             'date' => 'required|date|after_or_equal:today',
