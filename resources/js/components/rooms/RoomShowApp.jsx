@@ -27,20 +27,11 @@ export default function RoomShowApp({ room, currentDate, monthBookings, prodis, 
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-2 lg:col-start-1 lg:row-start-1">
                     <RoomHeader room={room} />
-
-                    <div>
-                        <ScheduleGrid
-                            roomId={room.id}
-                            currentDate={selectedDate}
-                            initialBookings={initialBookings}
-                            onSelectDate={handleSelectDate}
-                        />
-                    </div>
                 </div>
 
-                <div className="lg:col-span-1">
+                <div className="lg:col-span-1 lg:col-start-3 lg:row-start-1 lg:row-span-2 lg:self-start">
                     <CalendarWidget
                         actionButton={
                             <button
@@ -57,6 +48,15 @@ export default function RoomShowApp({ room, currentDate, monthBookings, prodis, 
                         initialDate={currentDate}
                         selectedDate={selectedDate}
                         initialMonthBookings={monthBookings}
+                        onSelectDate={handleSelectDate}
+                    />
+                </div>
+
+                <div className="lg:col-span-2 lg:col-start-1 lg:row-start-2">
+                    <ScheduleGrid
+                        roomId={room.id}
+                        currentDate={selectedDate}
+                        initialBookings={initialBookings}
                         onSelectDate={handleSelectDate}
                     />
                 </div>
