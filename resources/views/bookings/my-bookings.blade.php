@@ -11,7 +11,7 @@
 
     @if (!($verified ?? false))
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-8">
-            <form action="{{ route('bookings.verify.send') }}" method="POST" class="flex flex-col sm:flex-row gap-3">
+            <form id="verify-send-form" action="{{ route('bookings.verify.send') }}" method="POST" class="flex flex-col sm:flex-row gap-3">
                 @csrf
                 <div class="flex-1">
                     <label for="email" class="block text-sm font-semibold text-gray-700 mb-1.5">Email yang digunakan saat booking</label>
@@ -28,7 +28,7 @@
                     @enderror
                 </div>
                 <div class="flex items-end">
-                    <button type="submit" class="bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 text-sm whitespace-nowrap">
+                    <button id="verify-send-btn" type="submit" class="bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 text-sm whitespace-nowrap">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
                         Kirim Kode Verifikasi
                     </button>
@@ -41,7 +41,7 @@
             <h2 class="text-lg font-semibold text-gray-900 mb-1">Masukkan Kode Verifikasi</h2>
             <p class="text-sm text-gray-500 mb-5">Kode 6 digit telah dikirim ke <strong class="text-gray-700">{{ $pinEmail }}</strong>. Cek inbox atau folder spam.</p>
 
-            <form action="{{ route('bookings.verify.pin') }}" method="POST" class="flex flex-col sm:flex-row gap-3">
+            <form id="verify-pin-form" action="{{ route('bookings.verify.pin') }}" method="POST" class="flex flex-col sm:flex-row gap-3">
                 @csrf
                 <input type="hidden" name="email" value="{{ $pinEmail }}">
                 <div class="flex-1">
@@ -58,7 +58,7 @@
                     @enderror
                 </div>
                 <div class="flex items-end">
-                    <button type="submit" class="bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 text-sm whitespace-nowrap">
+                    <button id="verify-pin-btn" type="submit" class="bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 text-sm whitespace-nowrap">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         Verifikasi
                     </button>
@@ -172,3 +172,32 @@
     @endif
 </div>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    const setupSpinner = (formId, btnId, loadingText) => {
+        const form = document.getElementById(formId);
+        const btn = document.getElementById(btnId);
+        if (!form || !btn) return;
+
+        form.addEventListener('submit', () => {
+            if (btn.dataset.loading === '1') return;
+            btn.dataset.loading = '1';
+            btn.disabled = true;
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
+            btn.innerHTML = `
+                <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                ${loadingText}
+            `;
+        });
+    };
+
+    setupSpinner('verify-send-form', 'verify-send-btn', 'Mengirim...');
+    setupSpinner('verify-pin-form', 'verify-pin-btn', 'Memverifikasi...');
+})();
+</script>
+@endpush

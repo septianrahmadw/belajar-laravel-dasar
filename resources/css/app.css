@@ -8,6 +8,12 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
+@layer base {
+    button:not(:disabled) {
+        cursor: pointer;
+    }
+}
+
 .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
