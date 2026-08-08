@@ -94,7 +94,7 @@ export default function CalendarWidget({ roomId, initialDate, selectedDate: exte
         if (isPast) {
             btnCls += 'text-gray-300 cursor-not-allowed ';
         } else if (isSelected) {
-            btnCls += 'bg-indigo-600 text-white shadow-md ';
+            btnCls += 'bg-blue-600 text-white shadow-md ';
         } else {
             btnCls += 'text-gray-700 hover:bg-gray-100 ';
         }

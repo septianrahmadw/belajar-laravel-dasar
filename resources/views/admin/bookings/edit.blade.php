@@ -54,7 +54,7 @@
                 <div class="space-y-4">
                     <div>
                         <label for="room_id" class="block text-sm font-semibold text-gray-700 mb-1">Ruangan</label>
-                        <select name="room_id" id="room_id" class="w-full rounded-lg border-gray-300 border px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white @error('room_id') border-red-300 @enderror">
+                        <select name="room_id" id="room_id" class="w-full rounded-lg border-gray-300 border px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white @error('room_id') border-red-300 @enderror">
                             @foreach ($rooms as $room)
                                 <option value="{{ $room->id }}" {{ old('room_id', $booking->room_id) == $room->id ? 'selected' : '' }}>
                                     {{ $room->name }} ({{ $room->code }}) - {{ $room->location }}
@@ -69,7 +69,7 @@
                     <div>
                         <label for="date" class="block text-sm font-semibold text-gray-700 mb-1">Tanggal</label>
                         <input type="date" name="date" id="date" value="{{ old('date', $booking->date->format('Y-m-d')) }}"
-                            class="w-full rounded-lg border-gray-300 border px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none @error('date') border-red-300 @enderror">
+                            class="w-full rounded-lg border-gray-300 border px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none @error('date') border-red-300 @enderror">
                         @error('date')
                             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                         @enderror
@@ -78,7 +78,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label for="start_time" class="block text-sm font-semibold text-gray-700 mb-1">Jam Mulai</label>
-                            <select name="start_time" id="start_time" class="w-full rounded-lg border-gray-300 border px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white @error('start_time') border-red-300 @enderror">
+                            <select name="start_time" id="start_time" class="w-full rounded-lg border-gray-300 border px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white @error('start_time') border-red-300 @enderror">
                                 @foreach ($timeSlots as $slot)
                                     <option value="{{ $slot }}" {{ old('start_time', $booking->formatted_start_time) == $slot ? 'selected' : '' }}>
                                         {{ $slot }}
@@ -91,7 +91,7 @@
                         </div>
                         <div>
                             <label for="end_time" class="block text-sm font-semibold text-gray-700 mb-1">Jam Selesai</label>
-                            <select name="end_time" id="end_time" class="w-full rounded-lg border-gray-300 border px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white @error('end_time') border-red-300 @enderror">
+                            <select name="end_time" id="end_time" class="w-full rounded-lg border-gray-300 border px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white @error('end_time') border-red-300 @enderror">
                                 @foreach ($timeSlots as $slot)
                                     <option value="{{ $slot }}" {{ old('end_time', $booking->formatted_end_time) == $slot ? 'selected' : '' }}>
                                         {{ $slot }}
@@ -110,7 +110,7 @@
                 <a href="{{ route('admin.bookings.show', $booking) }}" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
                     Batal
                 </a>
-                <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200 flex items-center gap-2"
+                <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 flex items-center gap-2"
                     onclick="return confirm('Yakin ingin memindahkan jadwal booking ini?')">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
@@ -122,7 +122,7 @@
     </div>
 
     <div class="mt-4">
-        <a href="{{ route('admin.bookings.show', $booking) }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-indigo-600 transition-colors">
+        <a href="{{ route('admin.bookings.show', $booking) }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-blue-600 transition-colors">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
             Kembali ke Detail Booking
         </a>

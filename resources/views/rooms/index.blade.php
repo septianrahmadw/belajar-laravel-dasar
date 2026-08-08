@@ -3,21 +3,21 @@
 @section('title', 'Beranda')
 
 @section('content')
-<div class="bg-gradient-to-b from-indigo-50 via-white to-white">
+<div class="bg-gradient-to-b from-blue-50 via-white to-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="text-center max-w-2xl mx-auto mb-12">
-            <div class="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+            <div class="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
                 Sistem Peminjaman Ruangan
             </div>
             <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
-                Peminjaman <span class="text-indigo-600">Lab Komputer SFS</span>
+                Peminjaman <span class="text-blue-600">Lab Komputer SFS</span>
             </h1>
             <p class="text-lg text-gray-500 leading-relaxed">
                 Lihat ketersediaan ruangan laboratorium secara real-time dan lakukan peminjaman secara online. Cepat, mudah, dan transparan.
             </p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center mt-8">
-                <a href="#rooms" class="inline-flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
+                <a href="#rooms" class="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200">
                 <svg class="w-4 h-4 inline-block mr-1 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
                     Lihat Ruangan
                 </a>
@@ -29,7 +29,7 @@
         </div>
 
         <div class="max-w-4xl mx-auto">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-0 sm:divide-x sm:divide-indigo-100">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-0 sm:divide-x sm:divide-blue-100">
                 <div class="flex items-start gap-3 sm:px-6 first:pl-0 last:pr-0">
                     <div class="w-10 h-10 shrink-0 rounded-full bg-green-100 flex items-center justify-center">
                         <svg class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -40,8 +40,8 @@
                     </div>
                 </div>
                 <div class="flex items-start gap-3 sm:px-6 first:pl-0 last:pr-0">
-                    <div class="w-10 h-10 shrink-0 rounded-full bg-indigo-100 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+                    <div class="w-10 h-10 shrink-0 rounded-full bg-blue-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
                     </div>
                     <div>
                         <h3 class="font-semibold text-gray-900 mb-0.5 text-sm">Booking Online</h3>
@@ -85,7 +85,7 @@
             $totalSlots = $data['total_slots'];
         @endphp
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col">
-            <div class="bg-gradient-to-br from-indigo-500 via-blue-500 to-indigo-600 relative p-5">
+            <div class="bg-gradient-to-br from-blue-500 via-blue-500 to-blue-600 relative p-5">
                 <div class="absolute inset-0 opacity-10">
                     <svg class="w-full h-full" viewBox="0 0 400 300" fill="none"><rect x="30" y="20" width="70" height="50" rx="6" fill="white"/><rect x="120" y="20" width="70" height="50" rx="6" fill="white"/><rect x="210" y="20" width="70" height="50" rx="6" fill="white"/><rect x="300" y="20" width="70" height="50" rx="6" fill="white"/><rect x="30" y="90" width="70" height="50" rx="6" fill="white"/><rect x="120" y="90" width="70" height="50" rx="6" fill="white"/><rect x="210" y="90" width="70" height="50" rx="6" fill="white"/><rect x="300" y="90" width="70" height="50" rx="6" fill="white"/><rect x="30" y="160" width="70" height="50" rx="6" fill="white"/><rect x="120" y="160" width="70" height="50" rx="6" fill="white"/><rect x="210" y="160" width="70" height="50" rx="6" fill="white"/><rect x="300" y="160" width="70" height="50" rx="6" fill="white"/><rect x="20" y="230" width="360" height="30" rx="6" fill="white"/></svg>
                 </div>
@@ -132,7 +132,7 @@
                 @if ($room->facilities)
                 <div class="flex flex-wrap gap-1.5 mb-4">
                     @foreach (array_slice($room->facilities, 0, 5) as $facility)
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium bg-indigo-50 text-indigo-700">{{ $facility }}</span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium bg-blue-50 text-blue-700">{{ $facility }}</span>
                     @endforeach
                     @if (count($room->facilities) > 5)
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-600">+{{ count($room->facilities) - 5 }}</span>
@@ -165,7 +165,7 @@
                         <span class="text-[10px] text-gray-400 font-mono">18:00</span>
                     </div>
 
-                    <a href="{{ route('rooms.show', $room) }}" class="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-200">
+                    <a href="{{ route('rooms.show', $room) }}" class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors shadow-md shadow-blue-200">
                         @if ($status === 'full')
                         Lihat Jadwal Lengkap
                         @else

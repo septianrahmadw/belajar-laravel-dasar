@@ -57,7 +57,7 @@ export default function ScheduleGrid({ roomId, currentDate, initialBookings, onS
                     </div>
                 ) : loading ? (
                     <div className="text-center py-8">
-                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
+                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
                         <p className="text-gray-500 text-sm mt-2">Memuat jadwal...</p>
                     </div>
                 ) : (
@@ -118,7 +118,7 @@ export default function ScheduleGrid({ roomId, currentDate, initialBookings, onS
                                         <div className="w-16 shrink-0 flex items-center pt-1.5">
                                             <span className="text-xs font-semibold text-gray-400">{slot}</span>
                                         </div>
-                                        <div className="flex-1 h-14 rounded-xl border-2 border-dashed border-gray-100 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all flex items-center justify-center px-4">
+                                        <div className="flex-1 h-14 rounded-xl border-2 border-dashed border-gray-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all flex items-center justify-center px-4">
                                             <span className="text-sm text-green-600 font-semibold flex items-center gap-1.5">
                                                 <span className="w-2 h-2 bg-green-400 rounded-full" />
                                                 Tersedia
@@ -186,8 +186,8 @@ function BookingDetailModal({ booking, onClose }) {
                     <div className="p-6">
                         <div className="grid grid-cols-2 gap-3">
                             <InfoCard icon={<ClockIcon2 />} label="Waktu" value={`${booking.start_time.substring(0, 5)} - ${booking.end_time.substring(0, 5)}`} color="blue" />
-                            <InfoCard icon={<BookIcon />} label="Keperluan" value={booking.purpose} color="purple" />
-                            <InfoCard icon={<AcademicIcon />} label="Jurusan" value={booking.jurusan} color="indigo" />
+                            <InfoCard icon={<BookIcon />} label="Keperluan" value={booking.purpose} color="blue" />
+                            <InfoCard icon={<AcademicIcon />} label="Jurusan" value={booking.jurusan} color="blue" />
                             <InfoCard icon={<BuildingIcon />} label="Prodi" value={booking.prodi} color="pink" />
                             <InfoCard icon={<BookOpenIcon />} label="Mata Kuliah" value={booking.mata_kuliah} color="teal" />
                             <InfoCard icon={<CalendarIcon />} label="Semester" value={`Semester ${booking.semester}`} color="orange" />
@@ -211,8 +211,6 @@ function BookingDetailModal({ booking, onClose }) {
 
 const CARD_COLORS = {
     blue: 'bg-blue-50 text-blue-600',
-    purple: 'bg-purple-50 text-purple-600',
-    indigo: 'bg-indigo-50 text-indigo-600',
     pink: 'bg-pink-50 text-pink-600',
     teal: 'bg-teal-50 text-teal-600',
     orange: 'bg-orange-50 text-orange-600',

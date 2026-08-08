@@ -18,7 +18,7 @@ export default function RoomShowApp({ room, currentDate, monthBookings, prodis, 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="mb-6">
-                <a href="/rooms" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-indigo-600 transition-colors">
+                <a href="/rooms" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-blue-600 transition-colors">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
@@ -36,7 +36,7 @@ export default function RoomShowApp({ room, currentDate, monthBookings, prodis, 
                         actionButton={
                             <button
                                 onClick={() => setShowModal(true)}
-                                className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200"
+                                className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
                             >
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -76,7 +76,7 @@ export default function RoomShowApp({ room, currentDate, monthBookings, prodis, 
 function RoomHeader({ room }) {
     return (
         <div className="bg-white/50 backdrop-blur-xl rounded-2xl border border-white/40 shadow-lg overflow-hidden">
-            <div className="h-24 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-t-2xl relative">
+            <div className="h-24 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-600 rounded-t-2xl relative">
                 <div className="absolute inset-0 flex items-center justify-center">
                     <h1 className="text-4xl font-bold text-white drop-shadow-lg">{room.name}</h1>
                 </div>
@@ -85,7 +85,7 @@ function RoomHeader({ room }) {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-white/30 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                            <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                            <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                             </svg>
@@ -115,7 +115,7 @@ function RoomHeader({ room }) {
                         <h4 className="text-sm font-semibold text-gray-900 mb-2">Fasilitas</h4>
                         <div className="flex flex-wrap gap-2">
                             {room.facilities.map((facility, i) => (
-                                <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-medium bg-indigo-50 text-indigo-700">
+                                <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-medium bg-blue-50 text-blue-700">
                                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                                     </svg>

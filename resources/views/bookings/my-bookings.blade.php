@@ -20,7 +20,7 @@
                             <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
                         </div>
                         <input type="email" name="email" id="email" value="{{ old('email', $pinEmail ?? '') }}" required
-                               class="w-full rounded-xl border-gray-200 border pl-11 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
+                               class="w-full rounded-xl border-gray-200 border pl-11 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
                                placeholder="Masukkan email Anda">
                     </div>
                     @error('email')
@@ -28,7 +28,7 @@
                     @enderror
                 </div>
                 <div class="flex items-end">
-                    <button id="verify-send-btn" type="submit" class="bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 text-sm whitespace-nowrap">
+                    <button id="verify-send-btn" type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2 text-sm whitespace-nowrap">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
                         Kirim Kode Verifikasi
                     </button>
@@ -47,7 +47,7 @@
                 <div class="flex-1">
                     <div class="relative">
                         <input type="text" name="pin" id="pin" value="{{ old('pin') }}" required maxlength="6" inputmode="numeric" autocomplete="one-time-code"
-                               class="w-full rounded-xl border-gray-200 border px-4 py-2.5 text-sm tracking-[0.5em] text-center text-lg font-bold focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow"
+                               class="w-full rounded-xl border-gray-200 border px-4 py-2.5 text-sm tracking-[0.5em] text-center text-lg font-bold focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
                                placeholder="••••••">
                     </div>
                     @error('pin')
@@ -58,7 +58,7 @@
                     @enderror
                 </div>
                 <div class="flex items-end">
-                    <button id="verify-pin-btn" type="submit" class="bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 text-sm whitespace-nowrap">
+                    <button id="verify-pin-btn" type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2 text-sm whitespace-nowrap">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         Verifikasi
                     </button>
@@ -67,7 +67,7 @@
 
             <div class="mt-4 flex items-center gap-4 text-xs text-gray-500">
                 <span>Kode berlaku 10 menit, 5x percobaan.</span>
-                <a href="{{ route('bookings.my') }}?logout=1" class="text-indigo-600 hover:text-indigo-700 font-medium">Ganti email</a>
+                <a href="{{ route('bookings.my') }}?logout=1" class="text-blue-600 hover:text-blue-700 font-medium">Ganti email</a>
             </div>
         </div>
         @endif
@@ -86,7 +86,7 @@
             <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
             <h3 class="text-lg font-semibold text-gray-900 mb-1">Tidak ada booking ditemukan</h3>
             <p class="text-gray-500 text-sm mb-6">Belum ada peminjaman dengan email <strong>{{ $email }}</strong></p>
-            <a href="{{ route('rooms.index') }}" class="inline-flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-indigo-700 transition-colors text-sm">
+            <a href="{{ route('rooms.index') }}" class="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition-colors text-sm">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
                 Booking Sekarang
             </a>

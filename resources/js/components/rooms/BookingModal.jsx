@@ -227,7 +227,7 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
                         <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
                             <label className="flex items-center gap-3 cursor-pointer">
                                 <input type="checkbox" name="is_recurring" value="1" checked={form.is_recurring} onChange={handleChange}
-                                    className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
+                                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
                                 <div>
                                     <span className="text-sm font-semibold text-gray-700">Booking Berulang</span>
                                     <p className="text-[11px] text-gray-400">Setiap minggu di hari yang sama</p>
@@ -253,9 +253,9 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
                                         <p className="text-[11px] text-gray-400 mt-1">Maksimal 16x (16 minggu / 4 bulan)</p>
                                     </div>
                                     {showRecurrencePreview && (
-                                        <div className="bg-indigo-50 rounded-lg p-3">
-                                            <p className="text-xs font-semibold text-indigo-700 mb-1">Preview Jadwal:</p>
-                                            <div className="text-[11px] text-indigo-600 space-y-0.5">
+                                        <div className="bg-blue-50 rounded-lg p-3">
+                                            <p className="text-xs font-semibold text-blue-700 mb-1">Preview Jadwal:</p>
+                                            <div className="text-[11px] text-blue-600 space-y-0.5">
                                                 {recurrenceDates.map((d, i) => (
                                                     <div key={i}>{i + 1}. {DAY_NAMES[d.getDay()]}, {d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
                                                 ))}
@@ -305,7 +305,7 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
                         </FloatingField>
 
                         <button type="submit" disabled={showConflict}
-                            className="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2">
+                            className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2">
                             <RocketIcon />
                             Ajukan Booking
                         </button>
@@ -560,7 +560,7 @@ function CloseIcon() {
 
 function ClockIcon() {
     return (
-        <svg className="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+        <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
     );
