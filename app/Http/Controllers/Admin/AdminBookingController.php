@@ -46,31 +46,38 @@ class AdminBookingController extends Controller
 
     public function schedule(Request $request)
     {
+        $rooms = Room::where('is_active', true)
+            ->withCount('bookings as booking_count')
+            ->orderBy('name')
+            ->get();
+
+        return view('admin.schedule.index', compact('rooms'));
+    }
+
+    public function roomSchedule(Request $request, Room $room)
+    {
         $date = $request->get('date', Carbon::today()->format('Y-m-d'));
         $carbonDate = Carbon::parse($date);
 
         $weekStart = $carbonDate->copy()->startOfWeek(Carbon::MONDAY);
         $weekEnd = $carbonDate->copy()->startOfWeek(Carbon::MONDAY)->addDays(4);
 
-        $rooms = Room::where('is_active', true)->orderBy('name')->get();
-
-        $bookings = Booking::with('room')
+        $bookings = Booking::with('room', 'prodi')
+            ->where('room_id', $room->id)
             ->whereBetween('date', [$weekStart->format('Y-m-d'), $weekEnd->format('Y-m-d')])
             ->whereIn('status', ['approved', 'pending'])
             ->orderBy('start_time')
             ->get();
 
-        $schedule = $rooms->map(function (Room $room) use ($bookings, $weekStart) {
-            $days = [];
-            for ($i = 0; $i < 5; $i++) {
-                $day = $weekStart->copy()->addDays($i)->format('Y-m-d');
-                $days[$day] = $bookings
-                    ->filter(fn (Booking $b) => $b->room_id === $room->id && $b->date->format('Y-m-d') === $day)
-                    ->values();
-            }
+        $days = [];
+        for ($i = 0; $i < 5; $i++) {
+            $day = $weekStart->copy()->addDays($i)->format('Y-m-d');
+            $days[$day] = $bookings
+                ->filter(fn (Booking $b) => $b->date->format('Y-m-d') === $day)
+                ->values();
+        }
 
-            return ['room' => $room, 'days' => $days];
-        });
+        $schedule = ['room' => $room, 'days' => $days];
 
         $weekDates = [];
         for ($i = 0; $i < 5; $i++) {
@@ -87,7 +94,7 @@ class AdminBookingController extends Controller
         $prevWeek = $weekStart->copy()->subWeek()->format('Y-m-d');
         $nextWeek = $weekStart->copy()->addWeek()->format('Y-m-d');
 
-        return view('admin.schedule', compact('rooms', 'schedule', 'weekDates', 'carbonDate', 'prevWeek', 'nextWeek'));
+        return view('admin.schedule.show', compact('schedule', 'weekDates', 'carbonDate', 'prevWeek', 'nextWeek'));
     }
 
     public function show(Booking $booking)
@@ -220,11 +227,17 @@ class AdminBookingController extends Controller
         }
     }
 
-    public function reject(Booking $booking)
+    public function reject(Request $request, Booking $booking)
     {
         if ($booking->status !== 'pending') {
             return back()->withErrors(['error' => 'Hanya booking dengan status menunggu yang dapat ditolak.']);
         }
+
+        $request->validate([
+            'rejection_reason' => 'required|string|max:500',
+        ]);
+
+        $rejectionReason = $request->input('rejection_reason');
 
         if ($booking->recurrence_id) {
             $series = Booking::where('recurrence_id', $booking->recurrence_id)
@@ -233,8 +246,11 @@ class AdminBookingController extends Controller
 
             foreach ($series as $occ) {
                 $oldStatus = $occ->status;
-                $occ->update(['status' => 'rejected']);
-                $this->sendBookingNotification($occ->booker_email, new BookingStatusChanged($occ, $oldStatus));
+                $occ->update([
+                    'status'           => 'rejected',
+                    'rejection_reason' => $rejectionReason,
+                ]);
+                $this->sendBookingNotification($occ->booker_email, new BookingStatusChanged($occ, $oldStatus, $rejectionReason));
             }
 
             $count = $series->count();
@@ -243,9 +259,12 @@ class AdminBookingController extends Controller
         }
 
         $oldStatus = $booking->status;
-        $booking->update(['status' => 'rejected']);
+        $booking->update([
+            'status'           => 'rejected',
+            'rejection_reason' => $rejectionReason,
+        ]);
 
-        $this->sendBookingNotification($booking->booker_email, new BookingStatusChanged($booking, $oldStatus));
+        $this->sendBookingNotification($booking->booker_email, new BookingStatusChanged($booking, $oldStatus, $rejectionReason));
 
         return back()->with('success', 'Booking berhasil ditolak.');
     }

@@ -60,7 +60,14 @@
                 <p>{{ $messages[$booking->status] ?? $messages['pending'] }}</p>
             </div>
 
-            <div class="detail">
+             @if ($booking->status === 'rejected' && $rejectionReason)
+                <div class="detail" style="border-left: 4px solid #dc2626; padding: 16px; background: #fef2f2; border-radius: 0 8px 8px 0;">
+                    <h3 style="font-size: 13px; text-transform: uppercase; color: #991b1b; margin: 0 0 8px; letter-spacing: 0.5px;">Alasan Penolakan</h3>
+                    <p style="margin: 0; font-size: 13px; color: #7f1d1d; line-height: 1.5;">{{ $rejectionReason }}</p>
+                </div>
+             @endif
+
+             <div class="detail">
                 <h3>Detail Booking</h3>
                 <table>
                     <tr><td>Ruangan</td><td>{{ $booking->room->name }} ({{ $booking->room->code }})</td></tr>

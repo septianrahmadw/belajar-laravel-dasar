@@ -56,6 +56,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('prodis/{prodi}/toggle', [AdminProdiController::class, 'toggle'])->name('prodis.toggle');
 
         Route::get('schedule', [AdminBookingController::class, 'schedule'])->name('schedule');
+        Route::get('schedule/{room}', [AdminBookingController::class, 'roomSchedule'])->name('schedule.room');
 
         Route::get('bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
         Route::get('bookings/export/pdf', [AdminBookingController::class, 'exportPdf'])->name('bookings.export.pdf');

@@ -29,6 +29,7 @@ class Booking extends Model
         'end_time',
         'status',
         'notes',
+        'rejection_reason',
         'is_recurring',
         'recurrence_id',
         'recurrence_end_date',

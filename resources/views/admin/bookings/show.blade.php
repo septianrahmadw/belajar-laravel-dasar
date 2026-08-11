@@ -142,13 +142,10 @@
 
         @if ($booking->status === 'pending')
         <div class="p-6 border-t border-gray-100 bg-gray-50 flex items-center gap-3 justify-end">
-            <form action="{{ route('admin.bookings.reject', $booking) }}" method="POST" onsubmit="return confirm('{{ $booking->is_recurring ? 'Yakin ingin menolak SEMUA jadwal berulang ini? (' . $booking->recurrenceCount . ' jadwal)' : 'Yakin ingin menolak booking ini?' }}')">
-                @csrf
-                <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-red-600 bg-white border border-red-200 hover:bg-red-50 transition-colors flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                    Tolak
-                </button>
-            </form>
+            <button type="button" id="openRejectModal" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-red-600 bg-white border border-red-200 hover:bg-red-50 transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                Tolak
+            </button>
             <form action="{{ route('admin.bookings.approve', $booking) }}" method="POST" onsubmit="return confirm('{{ $booking->is_recurring ? 'Yakin ingin menyetujui SEMUA jadwal berulang ini? (' . $booking->recurrenceCount . ' jadwal)' : 'Yakin ingin menyetujui booking ini?' }}')">
                 @csrf
                 <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-green-600 hover:bg-green-700 transition-colors shadow-lg shadow-green-200 flex items-center gap-2">
@@ -157,6 +154,44 @@
                 </button>
             </form>
         </div>
+        @endif
+
+        @if ($booking->status === 'pending')
+        <div id="rejectModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Tolak Booking</h3>
+
+                <form action="{{ route('admin.bookings.reject', $booking) }}" method="POST" id="rejectForm">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="rejection_reason" class="block text-sm font-medium text-gray-700 mb-1">Alasan Penolakan</label>
+                        <textarea name="rejection_reason" id="rejection_reason" rows="4" required
+                                  class="w-full rounded-lg border-gray-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none"></textarea>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                        <button type="button" id="closeRejectModal" class="px-4 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                            Batal
+                        </button>
+                        <button type="submit" form="rejectForm"
+                                onclick="return confirm('{{ $booking->is_recurring ? 'Yakin ingin menolak SEMUA jadwal berulang ini? (' . $booking->recurrenceCount . ' jadwal)' : 'Yakin ingin menolak booking ini?' }}')"
+                                class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                            Tolak
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById('openRejectModal').addEventListener('click', function () {
+                document.getElementById('rejectModal').classList.remove('hidden');
+            });
+            document.getElementById('closeRejectModal').addEventListener('click', function () {
+                document.getElementById('rejectModal').classList.add('hidden');
+            });
+        </script>
         @endif
 
         @if (in_array($booking->status, ['approved', 'pending']))

@@ -80,17 +80,28 @@ test('halaman jadwal admin membutuhkan login', function () {
     $this->get(route('admin.schedule'))->assertRedirect(route('admin.login'));
 });
 
-test('halaman jadwal admin menampilkan booking approved dan pending per ruangan', function () {
+test('halaman jadwal admin (card) menampilkan daftar ruangan aktif', function () {
     $admin = makeAdminUser();
     $room = makeActiveRoomForSchedule();
-    $date = now()->format('Y-m-d');
+
+    $this->actingAs($admin)
+        ->get(route('admin.schedule'))
+        ->assertOk()
+        ->assertSee('Lab Komputer 1')
+        ->assertSee('Lihat Jadwal');
+});
+
+test('halaman detail jadwal per ruangan menampilkan booking approved dan pending', function () {
+    $admin = makeAdminUser();
+    $room = makeActiveRoomForSchedule();
+    $date = now()->startOfWeek(\Illuminate\Support\Carbon::MONDAY)->format('Y-m-d');
 
     makeScheduledBooking($room, $date, 'approved');
     makeScheduledBooking($room, $date, 'pending');
     makeScheduledBooking($room, $date, 'rejected');
 
     $this->actingAs($admin)
-        ->get(route('admin.schedule', ['date' => $date]))
+        ->get(route('admin.schedule.room', $room, ['date' => $date]))
         ->assertOk()
         ->assertSee('Lab Komputer 1')
         ->assertSee('Kuliah approved')
@@ -191,10 +202,44 @@ test('tolak satu jadwal berulang menolak seluruh seri sekaligus', function () {
     ]);
 
     $this->actingAs($admin)
-        ->post(route('admin.bookings.reject', $series[0]))
+        ->post(route('admin.bookings.reject', $series[0]), ['rejection_reason' => 'Jadwal bentrok'])
         ->assertSessionHas('success');
 
     foreach ($series as $booking) {
         $this->assertSame('rejected', $booking->fresh()->status);
+        $this->assertSame('Jadwal bentrok', $booking->fresh()->rejection_reason);
     }
+});
+
+test('menolak booking tanpa alasan gagal validasi', function () {
+    $admin = makeAdminUser();
+    $room = makeActiveRoomForSchedule();
+    $booking = makeScheduledBooking($room, now()->addDay()->format('Y-m-d'), 'pending');
+
+    $this->actingAs($admin)
+        ->post(route('admin.bookings.reject', $booking), [])
+        ->assertSessionHasErrors('rejection_reason');
+
+    $this->assertSame('pending', $booking->fresh()->status);
+});
+
+test('menolak booking dengan alasan menyimpan reason dan mengirim email', function () {
+    \Illuminate\Support\Facades\Mail::fake();
+
+    $admin = makeAdminUser();
+    $room = makeActiveRoomForSchedule();
+    $booking = makeScheduledBooking($room, now()->addDay()->format('Y-m-d'), 'pending');
+
+    $this->actingAs($admin)
+        ->post(route('admin.bookings.reject', $booking), ['rejection_reason' => 'Ruangan sudah dipakai'])
+        ->assertSessionHas('success');
+
+    $this->assertSame('rejected', $booking->fresh()->status);
+    $this->assertSame('Ruangan sudah dipakai', $booking->fresh()->rejection_reason);
+
+    \Illuminate\Support\Facades\Mail::assertSent(\App\Mail\BookingStatusChanged::class, function ($mail) use ($booking) {
+        return $mail->booking->is($booking)
+            && $mail->booking->status === 'rejected'
+            && $mail->rejectionReason === 'Ruangan sudah dipakai';
+    });
 });

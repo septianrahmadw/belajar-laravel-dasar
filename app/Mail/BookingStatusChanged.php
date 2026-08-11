@@ -16,6 +16,7 @@ class BookingStatusChanged extends Mailable
     public function __construct(
         public Booking $booking,
         public string $oldStatus,
+        public ?string $rejectionReason = null,
     ) {}
 
     public function envelope(): Envelope
