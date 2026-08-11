@@ -30,7 +30,7 @@ export default function ScheduleGrid({ roomId, currentDate, initialBookings, onS
     const isPast = d < new Date(new Date().setHours(0, 0, 0, 0));
 
     const slots = [];
-    for (let h = 7; h <= 17; h++) {
+    for (let h = 7; h <= 20; h++) {
         slots.push(String(h).padStart(2, '0') + ':00');
     }
 

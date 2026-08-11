@@ -25,13 +25,13 @@ class RoomController extends Controller
             $approvedBookings = $allTodayBookings->where('status', 'approved');
             $pendingBookings = $allTodayBookings->where('status', 'pending');
 
-            $totalSlots = 11;
+            $totalSlots = 14;
             $operatingStart = 7;
-            $operatingEnd = 18;
+            $operatingEnd = 21;
 
             $bookedHours = $approvedBookings->sum(function ($b) {
                 $start = max((int) explode(':', $b->formatted_start_time)[0], 7);
-                $end = min((int) explode(':', $b->formatted_end_time)[0], 18);
+                $end = min((int) explode(':', $b->formatted_end_time)[0], 21);
                 return max(0, $end - $start);
             });
 

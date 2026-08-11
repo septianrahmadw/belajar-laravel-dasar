@@ -168,8 +168,8 @@ class AdminBookingController extends Controller
         $validated = $request->validate([
             'room_id' => 'required|exists:rooms,id',
             'date' => 'required|date|after_or_equal:today',
-            'start_time' => 'required|after_or_equal:07:00|before_or_equal:18:00',
-            'end_time' => 'required|after:start_time|before_or_equal:18:00',
+            'start_time' => 'required|after_or_equal:07:00|before_or_equal:21:00',
+            'end_time' => 'required|after:start_time|before_or_equal:21:00',
         ]);
 
         $room = Room::findOrFail($validated['room_id']);
@@ -200,11 +200,11 @@ class AdminBookingController extends Controller
     private function getTimeSlots(): array
     {
         $slots = [];
-        for ($h = 7; $h < 18; $h++) {
+        for ($h = 7; $h < 21; $h++) {
             $slots[] = sprintf('%02d:00', $h);
             $slots[] = sprintf('%02d:30', $h);
         }
-        $slots[] = '18:00';
+        $slots[] = '21:00';
         return $slots;
     }
 

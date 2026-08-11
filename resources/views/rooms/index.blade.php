@@ -162,7 +162,7 @@
                         <span class="text-[10px] text-gray-400 font-mono">07:00</span>
                         <span class="text-[10px] text-gray-400 font-mono">12:00</span>
                         <span class="text-[10px] text-gray-400 font-mono">17:00</span>
-                        <span class="text-[10px] text-gray-400 font-mono">18:00</span>
+                        <span class="text-[10px] text-gray-400 font-mono">21:00</span>
                     </div>
 
                     <a href="{{ route('rooms.show', $room) }}" class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors shadow-md shadow-blue-200">

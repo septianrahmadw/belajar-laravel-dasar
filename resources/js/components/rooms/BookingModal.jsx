@@ -13,8 +13,8 @@ const JURUSAN_OPTIONS = [
     'Teknologi Informasi',
 ];
 
-const TIME_SLOTS_START = Array.from({ length: 11 }, (_, i) => String(i + 7).padStart(2, '0') + ':00');
-const TIME_SLOTS_END = Array.from({ length: 11 }, (_, i) => String(i + 8).padStart(2, '0') + ':00');
+const TIME_SLOTS_START = Array.from({ length: 14 }, (_, i) => String(i + 7).padStart(2, '0') + ':00');
+const TIME_SLOTS_END = Array.from({ length: 14 }, (_, i) => String(i + 8).padStart(2, '0') + ':00');
 
 export default function BookingModal({ isOpen, onClose, roomId, currentDate, prodis }) {
     const [form, setForm] = useState({
