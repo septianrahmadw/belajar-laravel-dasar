@@ -9,6 +9,9 @@ use App\Models\Booking;
 use App\Models\Room;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Mail\Mailable;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use League\Csv\Writer;
 
 class AdminBookingController extends Controller
@@ -41,6 +44,52 @@ class AdminBookingController extends Controller
         return view('admin.bookings.index', compact('bookings'));
     }
 
+    public function schedule(Request $request)
+    {
+        $date = $request->get('date', Carbon::today()->format('Y-m-d'));
+        $carbonDate = Carbon::parse($date);
+
+        $weekStart = $carbonDate->copy()->startOfWeek(Carbon::MONDAY);
+        $weekEnd = $carbonDate->copy()->startOfWeek(Carbon::MONDAY)->addDays(4);
+
+        $rooms = Room::where('is_active', true)->orderBy('name')->get();
+
+        $bookings = Booking::with('room')
+            ->whereBetween('date', [$weekStart->format('Y-m-d'), $weekEnd->format('Y-m-d')])
+            ->whereIn('status', ['approved', 'pending'])
+            ->orderBy('start_time')
+            ->get();
+
+        $schedule = $rooms->map(function (Room $room) use ($bookings, $weekStart) {
+            $days = [];
+            for ($i = 0; $i < 5; $i++) {
+                $day = $weekStart->copy()->addDays($i)->format('Y-m-d');
+                $days[$day] = $bookings
+                    ->filter(fn (Booking $b) => $b->room_id === $room->id && $b->date->format('Y-m-d') === $day)
+                    ->values();
+            }
+
+            return ['room' => $room, 'days' => $days];
+        });
+
+        $weekDates = [];
+        for ($i = 0; $i < 5; $i++) {
+            $d = $weekStart->copy()->addDays($i);
+            $weekDates[] = [
+                'date' => $d->format('Y-m-d'),
+                'label' => $d->locale('id')->isoFormat('ddd'),
+                'dayNum' => $d->format('d'),
+                'month' => $d->format('M'),
+                'isToday' => $d->isToday(),
+            ];
+        }
+
+        $prevWeek = $weekStart->copy()->subWeek()->format('Y-m-d');
+        $nextWeek = $weekStart->copy()->addWeek()->format('Y-m-d');
+
+        return view('admin.schedule', compact('rooms', 'schedule', 'weekDates', 'carbonDate', 'prevWeek', 'nextWeek'));
+    }
+
     public function show(Booking $booking)
     {
         $booking->load('room', 'prodi');
@@ -53,6 +102,36 @@ class AdminBookingController extends Controller
             return back()->withErrors(['error' => 'Hanya booking dengan status menunggu yang dapat disetujui.']);
         }
 
+        if ($booking->recurrence_id) {
+            $series = Booking::with('room')
+                ->where('recurrence_id', $booking->recurrence_id)
+                ->where('status', 'pending')
+                ->orderBy('date')
+                ->get();
+
+            $seriesIds = $series->pluck('id')->all();
+
+            $conflicts = $series->filter(function (Booking $occ) use ($seriesIds) {
+                return !$occ->room->isAvailableForTime($occ->date->format('Y-m-d'), $occ->start_time, $occ->end_time, $seriesIds);
+            });
+
+            if ($conflicts->isNotEmpty()) {
+                $dates = $conflicts->map(fn (Booking $occ) => $occ->date->format('d M Y'))->join(', ');
+
+                return back()->withErrors(['error' => "Tidak dapat menyetujui seluruh jadwal berulang karena terdapat konflik pada: {$dates}."]);
+            }
+
+            foreach ($series as $occ) {
+                $oldStatus = $occ->status;
+                $occ->update(['status' => 'approved']);
+                $this->sendBookingNotification($occ->booker_email, new BookingStatusChanged($occ, $oldStatus));
+            }
+
+            $count = $series->count();
+
+            return back()->with('success', "{$count} jadwal berulang berhasil disetujui sekaligus.");
+        }
+
         $room = $booking->room;
         if (!$room->isAvailableForTime($booking->date->format('Y-m-d'), $booking->start_time, $booking->end_time, $booking->id)) {
             return back()->withErrors(['error' => 'Waktu sudah disetujui oleh booking lain. Tidak dapat menyetujui booking ini.']);
@@ -61,7 +140,7 @@ class AdminBookingController extends Controller
         $oldStatus = $booking->status;
         $booking->update(['status' => 'approved']);
 
-        \Mail::to($booking->booker_email)->send(new BookingStatusChanged($booking, $oldStatus));
+        $this->sendBookingNotification($booking->booker_email, new BookingStatusChanged($booking, $oldStatus));
 
         return back()->with('success', 'Booking berhasil disetujui.');
     }
@@ -112,7 +191,7 @@ class AdminBookingController extends Controller
 
         $booking->load('room');
 
-        \Mail::to($booking->booker_email)->send(new BookingStatusChanged($booking, $booking->status));
+        $this->sendBookingNotification($booking->booker_email, new BookingStatusChanged($booking, $booking->status));
 
         return redirect()->route('admin.bookings.show', $booking)
             ->with('success', "Booking berhasil dipindahkan dari {$oldRoom} ({$oldDate}, {$oldTime}) ke {$booking->room->name} ({$booking->date->format('d M Y')}, {$booking->formatted_start_time} - {$booking->formatted_end_time}).");
@@ -129,16 +208,44 @@ class AdminBookingController extends Controller
         return $slots;
     }
 
+    private function sendBookingNotification(string $email, Mailable $mail): void
+    {
+        try {
+            \Mail::to($email)->send($mail);
+        } catch (\Throwable $e) {
+            Log::error('Gagal mengirim notifikasi booking', [
+                'email' => $email,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function reject(Booking $booking)
     {
         if ($booking->status !== 'pending') {
             return back()->withErrors(['error' => 'Hanya booking dengan status menunggu yang dapat ditolak.']);
         }
 
+        if ($booking->recurrence_id) {
+            $series = Booking::where('recurrence_id', $booking->recurrence_id)
+                ->where('status', 'pending')
+                ->get();
+
+            foreach ($series as $occ) {
+                $oldStatus = $occ->status;
+                $occ->update(['status' => 'rejected']);
+                $this->sendBookingNotification($occ->booker_email, new BookingStatusChanged($occ, $oldStatus));
+            }
+
+            $count = $series->count();
+
+            return back()->with('success', "{$count} jadwal berulang berhasil ditolak sekaligus.");
+        }
+
         $oldStatus = $booking->status;
         $booking->update(['status' => 'rejected']);
 
-        \Mail::to($booking->booker_email)->send(new BookingStatusChanged($booking, $oldStatus));
+        $this->sendBookingNotification($booking->booker_email, new BookingStatusChanged($booking, $oldStatus));
 
         return back()->with('success', 'Booking berhasil ditolak.');
     }
@@ -156,7 +263,7 @@ class AdminBookingController extends Controller
         foreach ($recurrenceBookings as $recBooking) {
             $oldStatus = $recBooking->status;
             $recBooking->update(['status' => 'cancelled']);
-            \Mail::to($recBooking->booker_email)->send(new BookingStatusChanged($recBooking, $oldStatus));
+            $this->sendBookingNotification($recBooking->booker_email, new BookingStatusChanged($recBooking, $oldStatus));
         }
 
         return back()->with('success', 'Semua jadwal berulang berhasil dibatalkan.');
@@ -167,9 +274,16 @@ class AdminBookingController extends Controller
         $oldStatus = $booking->status;
         $booking->update(['status' => 'cancelled']);
 
-        \Mail::to($booking->booker_email)->send(new BookingStatusChanged($booking, $oldStatus));
+        $this->sendBookingNotification($booking->booker_email, new BookingStatusChanged($booking, $oldStatus));
 
         return redirect()->route('admin.bookings.index')->with('success', 'Booking berhasil dibatalkan.');
+    }
+
+    public function forceDestroy(Booking $booking)
+    {
+        $booking->delete();
+
+        return redirect()->route('admin.bookings.index')->with('success', 'Data booking berhasil dihapus permanen.');
     }
 
     public function exportPdf(Request $request)

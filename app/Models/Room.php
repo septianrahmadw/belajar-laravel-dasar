@@ -38,7 +38,7 @@ class Room extends Model
             ->where('status', 'approved');
     }
 
-    public function isAvailableForTime(string $date, string $startTime, string $endTime, ?int $excludeBookingId = null): bool
+    public function isAvailableForTime(string $date, string $startTime, string $endTime, array|int|null $excludeBookingIds = null): bool
     {
         $query = $this->bookings()
             ->whereDate('date', $date)
@@ -48,8 +48,8 @@ class Room extends Model
                   ->where('end_time', '>', $startTime);
             });
 
-        if ($excludeBookingId) {
-            $query->where('id', '!=', $excludeBookingId);
+        if ($excludeBookingIds) {
+            $query->whereNotIn('id', (array) $excludeBookingIds);
         }
 
         return $query->count() === 0;

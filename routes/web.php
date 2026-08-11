@@ -55,6 +55,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('prodis', AdminProdiController::class)->except('show');
         Route::post('prodis/{prodi}/toggle', [AdminProdiController::class, 'toggle'])->name('prodis.toggle');
 
+        Route::get('schedule', [AdminBookingController::class, 'schedule'])->name('schedule');
+
         Route::get('bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
         Route::get('bookings/export/pdf', [AdminBookingController::class, 'exportPdf'])->name('bookings.export.pdf');
         Route::get('bookings/export/csv', [AdminBookingController::class, 'exportCsv'])->name('bookings.export.csv');
@@ -65,6 +67,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('bookings/{booking}/reject', [AdminBookingController::class, 'reject'])->name('bookings.reject');
         Route::post('bookings/{booking}/cancel-recurrence', [AdminBookingController::class, 'cancelRecurrence'])->name('bookings.cancel-recurrence');
         Route::delete('bookings/{booking}', [AdminBookingController::class, 'destroy'])->name('bookings.destroy');
+        Route::delete('bookings/{booking}/force-delete', [AdminBookingController::class, 'forceDestroy'])->name('bookings.force-destroy');
     });
 
     // Admin only: user management

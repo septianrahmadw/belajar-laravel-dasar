@@ -10,11 +10,25 @@ use App\Models\BookingAccessToken;
 use App\Models\Room;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Mail\Mailable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class BookingController extends Controller
 {
+    private function sendBookingNotification(string $email, Mailable $mail): void
+    {
+        try {
+            Mail::to($email)->send($mail);
+        } catch (\Throwable $e) {
+            Log::error('Gagal mengirim notifikasi booking', [
+                'email' => $email,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
     private function isBot(): bool
     {
         if (request()->input('website_url') !== null && request()->input('website_url') !== '') {
@@ -113,7 +127,7 @@ class BookingController extends Controller
                 $currentDate->addWeek();
             }
 
-            Mail::to($validated['booker_email'])->send(new BookingCreated($bookingsCreated[0]));
+            $this->sendBookingNotification($validated['booker_email'], new BookingCreated($bookingsCreated[0]));
 
             $count = count($bookingsCreated);
 
@@ -130,7 +144,7 @@ class BookingController extends Controller
 
             $booking = Booking::create($validated);
 
-            Mail::to($booking->booker_email)->send(new BookingCreated($booking));
+            $this->sendBookingNotification($booking->booker_email, new BookingCreated($booking));
 
             return redirect()
                 ->route('rooms.show', ['room' => $room, 'date' => $booking->date->format('Y-m-d')])
@@ -195,14 +209,7 @@ class BookingController extends Controller
                 'expires_at' => now()->addMinutes(10),
             ]);
 
-            try {
-                Mail::to($email)->send(new BookingPin($email, $pin));
-            } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::error('Gagal mengirim kode verifikasi booking', [
-                    'email' => $email,
-                    'error' => $e->getMessage(),
-                ]);
-            }
+            $this->sendBookingNotification($email, new BookingPin($email, $pin));
 
             session()->put('booking_pin_email', $email);
         } else {
@@ -292,7 +299,7 @@ class BookingController extends Controller
         $oldStatus = $booking->status;
         $booking->update(['status' => 'cancelled']);
 
-        Mail::to($booking->booker_email)->send(new BookingStatusChanged($booking, $oldStatus));
+        $this->sendBookingNotification($booking->booker_email, new BookingStatusChanged($booking, $oldStatus));
 
         return back()->with('success', 'Booking berhasil dibatalkan.')
             ->with('success_title', 'Booking Dibatalkan');
@@ -313,7 +320,7 @@ class BookingController extends Controller
         foreach ($recurrenceBookings as $recBooking) {
             $oldStatus = $recBooking->status;
             $recBooking->update(['status' => 'cancelled']);
-            Mail::to($recBooking->booker_email)->send(new BookingStatusChanged($recBooking, $oldStatus));
+            $this->sendBookingNotification($recBooking->booker_email, new BookingStatusChanged($recBooking, $oldStatus));
         }
 
         return back()->with('success', 'Semua jadwal berulang berhasil dibatalkan.')

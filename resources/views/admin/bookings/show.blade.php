@@ -142,14 +142,14 @@
 
         @if ($booking->status === 'pending')
         <div class="p-6 border-t border-gray-100 bg-gray-50 flex items-center gap-3 justify-end">
-            <form action="{{ route('admin.bookings.reject', $booking) }}" method="POST" onsubmit="return confirm('Yakin ingin menolak booking ini?')">
+            <form action="{{ route('admin.bookings.reject', $booking) }}" method="POST" onsubmit="return confirm('{{ $booking->is_recurring ? 'Yakin ingin menolak SEMUA jadwal berulang ini? (' . $booking->recurrenceCount . ' jadwal)' : 'Yakin ingin menolak booking ini?' }}')">
                 @csrf
                 <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-red-600 bg-white border border-red-200 hover:bg-red-50 transition-colors flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                     Tolak
                 </button>
             </form>
-            <form action="{{ route('admin.bookings.approve', $booking) }}" method="POST" onsubmit="return confirm('Yakin ingin menyetujui booking ini?')">
+            <form action="{{ route('admin.bookings.approve', $booking) }}" method="POST" onsubmit="return confirm('{{ $booking->is_recurring ? 'Yakin ingin menyetujui SEMUA jadwal berulang ini? (' . $booking->recurrenceCount . ' jadwal)' : 'Yakin ingin menyetujui booking ini?' }}')">
                 @csrf
                 <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-green-600 hover:bg-green-700 transition-colors shadow-lg shadow-green-200 flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -169,6 +169,35 @@
             </a>
         </div>
         @endif
+
+        <div class="p-6 border-t border-gray-100 bg-red-50/50">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-red-400 mb-1">Zona Berbahaya</h4>
+                    <p class="text-xs text-gray-500">Batalkan untuk mengubah status menjadi dibatalkan. Hapus permanen untuk menghilangkan data booking dari sistem.</p>
+                </div>
+                <div class="flex items-center gap-3 shrink-0">
+                    @if (in_array($booking->status, ['approved', 'pending']))
+                    <form action="{{ route('admin.bookings.destroy', $booking) }}" method="POST" onsubmit="return confirm('Yakin ingin membatalkan booking ini? Data tetap tersimpan dengan status dibatalkan.')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-orange-600 bg-white border border-orange-200 hover:bg-orange-50 transition-colors flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            Batalkan
+                        </button>
+                    </form>
+                    @endif
+                    <form action="{{ route('admin.bookings.force-destroy', $booking) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus PERMANEN data booking ini? Tindakan ini tidak dapat dibatalkan.')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-red-600 bg-white border border-red-200 hover:bg-red-50 transition-colors flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+                            Hapus Permanen
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="mt-4">
