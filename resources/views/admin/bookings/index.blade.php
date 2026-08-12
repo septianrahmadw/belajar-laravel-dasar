@@ -128,12 +128,6 @@
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 </button>
                             </form>
-                            <form action="{{ route('admin.bookings.reject', $booking) }}" method="POST" class="inline" @if ($booking->is_recurring) onsubmit="return confirm('Yakin ingin menolak SEMUA jadwal berulang ini? ({{ $booking->recurrenceCount }} jadwal)')" @endif>
-                                @csrf
-                                <button type="submit" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Tolak">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                </button>
-                            </form>
                             @endif
                         </div>
                     </td>
