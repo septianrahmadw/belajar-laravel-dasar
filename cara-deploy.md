@@ -89,3 +89,37 @@ php artisan migrate
 | Directory | /www/wwwroot/labkom.test |
 | Database | labkom |
 | Repo | git@github.com:septianrahmadw/belajar-laravel-dasar.git |
+
+---
+
+## Email & Queue Worker
+
+Email (notifikasi booking & PIN verifikasi) dikirim lewat antrian database (`QUEUE_CONNECTION=database`).
+Tanpa worker, email hanya menumpuk di tabel `jobs` dan **tidak pernah terkirim**.
+
+### Di Lokal (Development)
+Jalankan worker bersamaan dengan server:
+```bash
+composer run dev   # otomatis: serve + queue:listen + npm run dev
+```
+Atau buka terminal kedua:
+```bash
+php artisan queue:listen --tries=3 --timeout=60
+```
+
+### Di Server (aaPanel / cPanel)
+Proses antrian otomatis setiap menit lewat scheduler. Tambahkan **Cron Job**:
+
+aaPanel:
+```
+* * * * * /www/server/php/83/bin/php /www/wwwroot/labkom.test/artisan schedule:run >> /dev/null 2>&1
+```
+> Sesuaikan versi PHP (mis. `php/83`) dan path project.
+
+cPanel (Cron Jobs → Add New Cron Job):
+```
+* * * * * /usr/local/bin/php /home/USER/path/labkom.test/artisan schedule:run >/dev/null 2>&1
+```
+> Sesuaikan path php dan project.
+
+Scheduler ini memproses semua job yang ada lalu berhenti (terdaftar di `routes/console.php`), jadi aman untuk shared hosting tanpa daemon.
