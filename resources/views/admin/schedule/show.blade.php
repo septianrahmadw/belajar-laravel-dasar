@@ -93,7 +93,10 @@
                                 <span class="w-1.5 h-1.5 rounded-full shrink-0 {{ $booking->status === 'approved' ? 'bg-green-500' : 'bg-amber-500' }}"></span>
                             </div>
                             <p class="text-xs font-medium text-gray-800 truncate">{{ $booking->purpose }}</p>
-                            <p class="text-[11px] text-gray-500 truncate">Kelas {{ $booking->kelas ?? '-' }} @if($booking->prodi) &middot; {{ $booking->prodi->name }} @else &middot; - @endif</p>
+                            <div class="flex items-center justify-between gap-1">
+                                <p class="text-[11px] text-gray-500 truncate">@if($booking->prodi){{ $booking->prodi->name }}@else-@endif</p>
+                                <p class="text-[11px] text-gray-500 shrink-0">Kelas {{ $booking->kelas ?? '-' }}</p>
+                            </div>
                             <p class="text-[11px] text-gray-500 truncate">{{ $booking->mata_kuliah ?? '-' }}</p>
                         </a>
                         @endforeach

@@ -19,37 +19,19 @@ class BookingController extends Controller
 {
     private function sendBookingNotification(string $email, Mailable $mail): void
     {
-        $maxAttempts = 3;
-        $delaySeconds = 1;
+        try {
+            Mail::to($email)->queue($mail);
 
-        for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
-            try {
-                Mail::to($email)->send($mail);
-
-                Log::info('Notifikasi booking berhasil dikirim', [
-                    'email' => $email,
-                    'mailable' => class_basename($mail),
-                    'attempt' => $attempt,
-                ]);
-
-                return;
-            } catch (\Throwable $e) {
-                Log::warning("Gagal mengirim notifikasi booking (percobaan {$attempt}/{$maxAttempts})", [
-                    'email' => $email,
-                    'error' => $e->getMessage(),
-                ]);
-
-                if ($attempt < $maxAttempts) {
-                    sleep($delaySeconds);
-                    $delaySeconds *= 3;
-                }
-            }
+            Log::info('Notifikasi booking dijadwalkan ke antrian', [
+                'email' => $email,
+                'mailable' => class_basename($mail),
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Gagal memasukkan notifikasi booking ke antrian', [
+                'email' => $email,
+                'error' => $e->getMessage(),
+            ]);
         }
-
-        Log::error('Notifikasi booking gagal dikirim setelah beberapa percobaan', [
-            'email' => $email,
-            'mailable' => class_basename($mail),
-        ]);
     }
 
     private function isBot(): bool
