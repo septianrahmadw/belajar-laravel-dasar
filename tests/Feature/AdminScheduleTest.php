@@ -133,6 +133,16 @@ test('update jadwal tidak gagal ketika pengiriman email error', function () {
     $this->actingAs($admin)
         ->put(route('admin.bookings.update', $booking), [
             'room_id' => $room->id,
+            'booker_name' => 'Test User',
+            'booker_email' => 'test@example.com',
+            'booker_phone' => '081234567890',
+            'jurusan' => 'Teknik Informatika',
+            'prodi_id' => null,
+            'purpose' => 'Kuliah',
+            'mata_kuliah' => 'Pemrograman',
+            'semester' => 2,
+            'kelas' => 'A',
+            'dosen' => 'Dosen A',
             'date' => now()->addDays(2)->format('Y-m-d'),
             'start_time' => '12:00',
             'end_time' => '13:00',
@@ -146,6 +156,68 @@ test('update jadwal tidak gagal ketika pengiriman email error', function () {
         'end_time' => '13:00',
     ]);
     $this->assertSame(now()->addDays(2)->format('Y-m-d'), $booking->fresh()->date->format('Y-m-d'));
+});
+
+test('admin dapat mengedit seluruh data peminjam dan akademik', function () {
+    $admin = makeAdminUser();
+    $room = makeActiveRoomForSchedule();
+    $booking = makeScheduledBooking($room, now()->addDay()->format('Y-m-d'), 'pending');
+
+    $this->actingAs($admin)
+        ->put(route('admin.bookings.update', $booking), [
+            'room_id' => $room->id,
+            'booker_name' => 'Nama Baru',
+            'booker_email' => 'baru@example.com',
+            'booker_phone' => '089999999999',
+            'jurusan' => 'Teknologi Informasi',
+            'prodi_id' => null,
+            'purpose' => 'Praktikum',
+            'mata_kuliah' => 'Basis Data',
+            'semester' => 4,
+            'kelas' => 'C',
+            'dosen' => 'Dosen Baru',
+            'teknisi' => 'Teknisi X',
+            'notes' => 'Catatan baru',
+            'date' => now()->addDay()->format('Y-m-d'),
+            'start_time' => '08:00',
+            'end_time' => '10:00',
+        ])
+        ->assertRedirect(route('admin.bookings.show', $booking))
+        ->assertSessionHas('success');
+
+    $fresh = $booking->fresh();
+    $this->assertSame('Nama Baru', $fresh->booker_name);
+    $this->assertSame('baru@example.com', $fresh->booker_email);
+    $this->assertSame('089999999999', $fresh->booker_phone);
+    $this->assertSame('Teknologi Informasi', $fresh->jurusan);
+    $this->assertSame('Praktikum', $fresh->purpose);
+    $this->assertSame('Basis Data', $fresh->mata_kuliah);
+    $this->assertSame(4, $fresh->semester);
+    $this->assertSame('C', $fresh->kelas);
+    $this->assertSame('Dosen Baru', $fresh->dosen);
+    $this->assertSame('Teknisi X', $fresh->teknisi);
+    $this->assertSame('Catatan baru', $fresh->notes);
+});
+
+test('edit booking gagal validasi ketika data peminjam tidak lengkap', function () {
+    $admin = makeAdminUser();
+    $room = makeActiveRoomForSchedule();
+    $booking = makeScheduledBooking($room, now()->addDay()->format('Y-m-d'), 'pending');
+
+    $this->actingAs($admin)
+        ->put(route('admin.bookings.update', $booking), [
+            'room_id' => $room->id,
+            'booker_name' => '',
+            'booker_email' => 'bukan-email',
+            'booker_phone' => '',
+            'purpose' => '',
+            'date' => now()->addDay()->format('Y-m-d'),
+            'start_time' => '08:00',
+            'end_time' => '10:00',
+        ])
+        ->assertSessionHasErrors(['booker_name', 'booker_email', 'booker_phone', 'jurusan', 'purpose']);
+
+    $this->assertSame('pending', $booking->fresh()->status);
 });
 
 test('approve satu jadwal berulang menyetujui seluruh seri sekaligus', function () {

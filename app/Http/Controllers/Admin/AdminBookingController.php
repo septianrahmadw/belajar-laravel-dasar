@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\BookingCreated;
 use App\Mail\BookingStatusChanged;
 use App\Models\Booking;
+use App\Models\Prodi;
 use App\Models\Room;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -161,9 +162,11 @@ class AdminBookingController extends Controller
         }
 
         $rooms = Room::where('is_active', true)->orderBy('name')->get();
+        $prodis = Prodi::where('is_active', true)->orderBy('jurusan')->orderBy('name')->get();
         $timeSlots = $this->getTimeSlots();
+        $jurusans = $this->getJurusans();
 
-        return view('admin.bookings.edit', compact('booking', 'rooms', 'timeSlots'));
+        return view('admin.bookings.edit', compact('booking', 'rooms', 'prodis', 'timeSlots', 'jurusans'));
     }
 
     public function update(Request $request, Booking $booking)
@@ -174,9 +177,21 @@ class AdminBookingController extends Controller
 
         $validated = $request->validate([
             'room_id' => 'required|exists:rooms,id',
+            'booker_name' => 'required|string|max:255',
+            'booker_email' => 'required|email|max:255',
+            'booker_phone' => 'required|string|max:20',
+            'jurusan' => 'required|string|max:255',
+            'prodi_id' => 'nullable|exists:prodis,id',
+            'purpose' => 'required|in:Kuliah,Praktikum',
+            'mata_kuliah' => 'required|string|max:255',
+            'semester' => 'required|integer|min:1|max:6',
+            'kelas' => 'required|in:A,B,C,D,E',
+            'dosen' => 'required|string|max:255',
+            'teknisi' => 'nullable|string|max:255',
             'date' => 'required|date|after_or_equal:today',
-            'start_time' => 'required|after_or_equal:07:00|before_or_equal:21:00',
-            'end_time' => 'required|after:start_time|before_or_equal:21:00',
+            'start_time' => 'required|date_format:H:i|after_or_equal:07:00|before_or_equal:21:00',
+            'end_time' => 'required|date_format:H:i|after:start_time|before_or_equal:21:00',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         $room = Room::findOrFail($validated['room_id']);
@@ -189,19 +204,28 @@ class AdminBookingController extends Controller
         $oldTime = $booking->formatted_start_time . ' - ' . $booking->formatted_end_time;
         $oldRoom = $booking->room->name;
 
-        $booking->update([
-            'room_id' => $validated['room_id'],
-            'date' => $validated['date'],
-            'start_time' => $validated['start_time'],
-            'end_time' => $validated['end_time'],
-        ]);
+        $booking->update($validated);
 
         $booking->load('room');
 
         $this->sendBookingNotification($booking->booker_email, new BookingStatusChanged($booking, $booking->status));
 
         return redirect()->route('admin.bookings.show', $booking)
-            ->with('success', "Booking berhasil dipindahkan dari {$oldRoom} ({$oldDate}, {$oldTime}) ke {$booking->room->name} ({$booking->date->format('d M Y')}, {$booking->formatted_start_time} - {$booking->formatted_end_time}).");
+            ->with('success', "Booking berhasil diperbarui dari {$oldRoom} ({$oldDate}, {$oldTime}) ke {$booking->room->name} ({$booking->date->format('d M Y')}, {$booking->formatted_start_time} - {$booking->formatted_end_time}).");
+    }
+
+    private function getJurusans(): array
+    {
+        return [
+            'Budidaya Tanaman Pangan',
+            'Budidaya Tanaman Perkebunan',
+            'Teknologi Pertanian',
+            'Peternakan',
+            'Ekonomi dan Bisnis',
+            'Teknik',
+            'Perikanan dan Kelautan',
+            'Teknologi Informasi',
+        ];
     }
 
     private function getTimeSlots(): array
