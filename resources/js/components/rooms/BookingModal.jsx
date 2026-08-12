@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
+import { createPortal, flushSync } from 'react-dom';
 
 const DAY_NAMES = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 const JURUSAN_OPTIONS = [
@@ -43,6 +43,7 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
     const [recurrenceDates, setRecurrenceDates] = useState([]);
     const [showRecurrencePreview, setShowRecurrencePreview] = useState(false);
     const [openedAt, setOpenedAt] = useState(0);
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
@@ -107,9 +108,10 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
 
     const handleSubmit = useCallback((e) => {
         e.preventDefault();
-        if (showConflict) return;
+        if (showConflict || submitting) return;
+        flushSync(() => setSubmitting(true));
         e.target.submit();
-    }, [showConflict]);
+    }, [showConflict, submitting]);
 
     const recurrenceDay = form.date ? DAY_NAMES[new Date(form.date + 'T00:00:00').getDay()] : '-';
 
@@ -304,10 +306,19 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
                                 className={inputCls + ' resize-none'} />
                         </FloatingField>
 
-                        <button type="submit" disabled={showConflict}
+                        <button type="submit" disabled={showConflict || submitting}
                             className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2">
-                            <RocketIcon />
-                            Ajukan Booking
+                            {submitting ? (
+                                <>
+                                    <SpinnerIcon />
+                                    Mengirim...
+                                </>
+                            ) : (
+                                <>
+                                    <RocketIcon />
+                                    Ajukan Booking
+                                </>
+                            )}
                         </button>
                         <p className="text-[11px] text-gray-400 text-center">Booking akan menunggu persetujuan admin</p>
                     </form>
@@ -578,6 +589,15 @@ function RocketIcon() {
     return (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+        </svg>
+    );
+}
+
+function SpinnerIcon() {
+    return (
+        <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
     );
 }
