@@ -52,39 +52,72 @@
         <span class="text-xs text-gray-500">{{ $schedule['room']->capacity ? $schedule['room']->capacity . ' kapasitas' : '' }}</span>
     </div>
 
+    @php
+        $pxPerHour = 56;
+        $startHour = 7;
+        $endHour = 21;
+        $dayHeight = ($endHour - $startHour) * $pxPerHour;
+    @endphp
     <div class="overflow-x-auto">
-        <table class="w-full text-sm" style="min-width: 1000px;">
-            <thead>
-                <tr class="bg-gray-50 border-b border-gray-100">
-                    <th class="text-left px-5 py-3 font-semibold text-gray-600 min-w-[100px]">Jam</th>
-                    @foreach ($weekDates as $day)
-                    <th class="text-center px-3 py-3 font-semibold text-gray-600 min-w-[130px]">
-                        <span class="text-xs uppercase tracking-wide {{ $day['isToday'] ? 'text-blue-600' : 'text-gray-500' }}">{{ $day['label'] }}</span>
-                        <span class="block text-lg font-bold {{ $day['isToday'] ? 'text-blue-600' : 'text-gray-900' }}">{{ $day['dayNum'] }}</span>
-                        <span class="block text-[11px] font-medium {{ $day['isToday'] ? 'text-blue-500' : 'text-gray-400' }}">{{ $day['month'] }}</span>
-                    </th>
-                    @endforeach
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-50">
-                @php $timeSlots = ['07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00']; @endphp
-                @foreach ($timeSlots as $slot)
-                <tr class="hover:bg-gray-50/50 transition-colors">
-                    <td class="px-5 py-2 sticky left-0 bg-white font-mono text-xs text-gray-500 border-r border-gray-100">{{ $slot }}</td>
-                    @foreach ($weekDates as $day)
-                    <td class="px-2 py-3 align-top {{ $day['isToday'] ? 'bg-blue-50/40' : '' }}">
-                        @php $dayBookings = $schedule['days'][$day['date']] ?? collect(); @endphp
-                        @php
-                            $slotNum = ((int) explode(':', $slot)[0]) * 2 + ((int) explode(':', $slot)[1]) / 60 * 2;
-                            $matching = $dayBookings->filter(function ($b) use ($slotNum) {
-                                $startNum = ((int) explode(':', $b->start_time)[0]) * 2 + ((int) explode(':', $b->start_time)[1]) / 60 * 2;
-                                $endNum = ((int) explode(':', $b->end_time)[0]) * 2 + ((int) explode(':', $b->end_time)[1]) / 60 * 2;
-                                return $startNum === $slotNum;
-                            });
-                        @endphp
-                        @foreach ($matching as $booking)
+        <div class="flex" style="min-width: 900px;">
+            <div class="sticky left-0 z-20 w-[72px] shrink-0 bg-white border-r border-gray-100">
+                <div class="h-14"></div>
+                <div class="relative" style="height: {{ $dayHeight }}px;">
+                    @for ($h = $startHour; $h <= $endHour; $h++)
+                    <div class="absolute right-2 -translate-y-1/2 font-mono text-xs text-gray-500" style="top: {{ ($h - $startHour) * $pxPerHour }}px;">
+                        {{ sprintf('%02d:00', $h) }}
+                    </div>
+                    @endfor
+                </div>
+            </div>
+
+            @foreach ($weekDates as $day)
+            <div class="flex-1 min-w-[140px]">
+                <div class="h-14 border-b border-gray-100 {{ $day['isToday'] ? 'bg-blue-50/40' : 'bg-gray-50/50' }} flex flex-col items-center justify-center">
+                    <span class="text-xs uppercase tracking-wide {{ $day['isToday'] ? 'text-blue-600' : 'text-gray-500' }}">{{ $day['label'] }}</span>
+                    <span class="text-lg font-bold leading-none {{ $day['isToday'] ? 'text-blue-600' : 'text-gray-900' }}">{{ $day['dayNum'] }}</span>
+                    <span class="text-[11px] font-medium {{ $day['isToday'] ? 'text-blue-500' : 'text-gray-400' }}">{{ $day['month'] }}</span>
+                </div>
+
+                @php
+                    $dayBookings = $schedule['days'][$day['date']] ?? collect();
+                    $positioned = [];
+                    $laneEnds = [];
+                    foreach ($dayBookings as $b) {
+                        $startMin = ((int) substr($b->start_time, 0, 2)) * 60 + (int) substr($b->start_time, 3, 2);
+                        $endMin = ((int) substr($b->end_time, 0, 2)) * 60 + (int) substr($b->end_time, 3, 2);
+                        if ($endMin <= $startMin) {
+                            $endMin = $startMin + 60;
+                        }
+                        $lane = 0;
+                        while (isset($laneEnds[$lane]) && $laneEnds[$lane] > $startMin) {
+                            $lane++;
+                        }
+                        $laneEnds[$lane] = $endMin;
+                        $positioned[] = [
+                            'booking' => $b,
+                            'top' => ($startMin - $startHour * 60) * $pxPerHour / 60,
+                            'height' => ($endMin - $startMin) * $pxPerHour / 60,
+                            'lane' => $lane,
+                        ];
+                    }
+                    $maxLanes = count($laneEnds) ?: 1;
+                    $laneWidth = 100 / $maxLanes;
+                @endphp
+
+                <div class="relative {{ $day['isToday'] ? 'bg-blue-50/30' : '' }}" style="height: {{ $dayHeight }}px;">
+                    @for ($h = $startHour; $h <= $endHour; $h++)
+                    <div class="absolute inset-x-0 border-t {{ $h === $startHour ? 'border-gray-200' : 'border-gray-100' }}" style="top: {{ ($h - $startHour) * $pxPerHour }}px;"></div>
+                    @endfor
+                    @for ($h = $startHour; $h < $endHour; $h++)
+                    <div class="absolute inset-x-0 border-t border-dashed border-gray-100/60" style="top: {{ ($h - $startHour) * $pxPerHour + 28 }}px;"></div>
+                    @endfor
+
+                    @foreach ($positioned as $p)
+                    @php $booking = $p['booking']; @endphp
+                    <div class="absolute px-0.5" style="top: {{ $p['top'] }}px; height: {{ $p['height'] }}px; left: {{ $p['lane'] * $laneWidth }}%; width: {{ $laneWidth }}%;">
                         <a href="{{ route('admin.bookings.show', $booking) }}"
-                           class="block rounded-lg px-2 py-1.5 border transition-colors
+                           class="block h-full rounded-lg border px-1.5 py-1 overflow-hidden transition-colors
                                {{ $booking->status === 'approved'
                                    ? 'bg-green-50 border-green-200 hover:bg-green-100'
                                    : 'bg-amber-50 border-amber-200 hover:bg-amber-100' }}">
@@ -92,20 +125,21 @@
                                 <span class="font-mono text-[11px] font-semibold {{ $booking->status === 'approved' ? 'text-green-700' : 'text-amber-700' }}">{{ $booking->formatted_start_time }}-{{ $booking->formatted_end_time }}</span>
                                 <span class="w-1.5 h-1.5 rounded-full shrink-0 {{ $booking->status === 'approved' ? 'bg-green-500' : 'bg-amber-500' }}"></span>
                             </div>
-                            <p class="text-xs font-medium text-gray-800 truncate">{{ $booking->purpose }}</p>
+                            <p class="text-xs font-medium text-gray-800 truncate leading-tight">{{ $booking->purpose }}</p>
                             <div class="flex items-center justify-between gap-1">
                                 <p class="text-[11px] text-gray-500 truncate">@if($booking->prodi){{ $booking->prodi->name }}@else-@endif</p>
                                 <p class="text-[11px] text-gray-500 shrink-0">Kelas {{ $booking->kelas ?? '-' }}</p>
                             </div>
+                            @if ($p['height'] >= 112)
                             <p class="text-[11px] text-gray-500 truncate">{{ $booking->mata_kuliah ?? '-' }}</p>
+                            @endif
                         </a>
-                        @endforeach
-                    </td>
+                    </div>
                     @endforeach
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </div>
+            </div>
+            @endforeach
+        </div>
     </div>
 </div>
 @endsection
