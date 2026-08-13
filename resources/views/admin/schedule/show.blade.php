@@ -36,9 +36,8 @@
         </div>
 
         <form action="{{ route('admin.schedule.room', $schedule['room']) }}" method="GET" class="flex items-center gap-2">
-            <input type="date" name="date" value="{{ $carbonDate->format('Y-m-d') }}"
-                   class="rounded-lg border-gray-200 border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors">Tampilkan</button>
+            <div class="admin-datepicker-root" data-props="{{ json_encode(['name' => 'date', 'initialValue' => $carbonDate->format('Y-m-d')]) }}"></div>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors h-[38px]">Tampilkan</button>
         </form>
     </div>
 </div>
