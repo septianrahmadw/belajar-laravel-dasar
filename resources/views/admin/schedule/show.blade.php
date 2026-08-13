@@ -60,11 +60,11 @@
     @endphp
     <div class="overflow-x-auto">
         <div class="flex" style="min-width: 900px;">
-            <div class="sticky left-0 z-20 w-[72px] shrink-0 bg-white border-r border-gray-100">
+            <div class="sticky left-0 z-20 shrink-0 bg-white border-r-2 border-gray-200" style="width: 84px; box-shadow: 4px 0 10px rgba(0,0,0,0.05);">
                 <div class="h-14"></div>
                 <div class="relative" style="height: {{ $dayHeight }}px;">
                     @for ($h = $startHour; $h <= $endHour; $h++)
-                    <div class="absolute right-2 -translate-y-1/2 font-mono text-xs text-gray-500" style="top: {{ ($h - $startHour) * $pxPerHour }}px;">
+                    <div class="absolute -translate-y-1/2 font-mono text-xs text-gray-500 font-medium" style="right: 16px; top: {{ ($h - $startHour) * $pxPerHour }}px;">
                         {{ sprintf('%02d:00', $h) }}
                     </div>
                     @endfor
@@ -115,7 +115,7 @@
 
                     @foreach ($positioned as $p)
                     @php $booking = $p['booking']; @endphp
-                    <div class="absolute px-0.5" style="top: {{ $p['top'] }}px; height: {{ $p['height'] }}px; left: {{ $p['lane'] * $laneWidth }}%; width: {{ $laneWidth }}%;">
+                    <div class="absolute px-1" style="top: {{ $p['top'] }}px; height: {{ $p['height'] }}px; left: {{ $p['lane'] * $laneWidth }}%; width: {{ $laneWidth }}%;">
                         <a href="{{ route('admin.bookings.show', $booking) }}"
                            class="block h-full rounded-lg border px-1.5 py-1 overflow-hidden transition-colors
                                {{ $booking->status === 'approved'
