@@ -19,7 +19,7 @@ class AdminBookingController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Booking::with('room', 'prodi');
+        $query = Booking::query();
 
         if ($status = $request->get('status')) {
             $query->where('status', $status);
@@ -40,9 +40,87 @@ class AdminBookingController extends Controller
             $query->whereDate('date', $date);
         }
 
-        $bookings = $query->orderByDesc('date')->orderByDesc('created_at')->paginate(15)->withQueryString();
+        $ids = $query->pluck('id');
 
-        return view('admin.bookings.index', compact('bookings'));
+        $singleIds = Booking::whereIn('id', $ids)
+            ->whereNull('recurrence_id')
+            ->pluck('id');
+
+        $groupReps = Booking::whereIn('id', $ids)
+            ->whereNotNull('recurrence_id')
+            ->selectRaw('recurrence_id, MIN(id) as rep_id')
+            ->groupBy('recurrence_id')
+            ->pluck('rep_id');
+
+        $repIds = $singleIds->merge($groupReps);
+
+        $bookings = Booking::with('room', 'prodi')
+            ->whereIn('id', $repIds)
+            ->orderByDesc('created_at')
+            ->paginate(15)
+            ->withQueryString();
+
+        $recurrenceGroups = $this->loadRecurrenceGroups(
+            $bookings->filter(fn (Booking $b) => $b->recurrence_id)->pluck('recurrence_id')->unique()
+        );
+
+        $recent = $this->latestQueue(8);
+
+        return view('admin.bookings.index', compact('bookings', 'recurrenceGroups', 'recent'));
+    }
+
+    private function loadRecurrenceGroups(iterable $recurrenceIds): \Illuminate\Support\Collection
+    {
+        $ids = collect($recurrenceIds)->filter()->values();
+
+        if ($ids->isEmpty()) {
+            return collect();
+        }
+
+        return Booking::whereIn('recurrence_id', $ids)
+            ->orderBy('date')
+            ->get()
+            ->groupBy('recurrence_id')
+            ->map(function ($items) {
+                return [
+                    'total' => $items->count(),
+                    'start_date' => $items->min('date'),
+                    'end_date' => $items->max('date'),
+                    'statuses' => $items->groupBy('status')->map->count(),
+                    'occurrences' => $items,
+                ];
+            })
+            ->keyBy(fn ($group, $key) => (string) $key);
+    }
+
+    private function latestQueue(int $limit = 8): \Illuminate\Support\Collection
+    {
+        $ids = Booking::pluck('id');
+
+        $singleIds = Booking::whereIn('id', $ids)
+            ->whereNull('recurrence_id')
+            ->pluck('id');
+
+        $groupReps = Booking::whereIn('id', $ids)
+            ->whereNotNull('recurrence_id')
+            ->selectRaw('recurrence_id, MIN(id) as rep_id')
+            ->groupBy('recurrence_id')
+            ->pluck('rep_id');
+
+        $recent = Booking::with('room', 'prodi')
+            ->whereIn('id', $singleIds->merge($groupReps))
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get();
+
+        $recurrenceGroups = $this->loadRecurrenceGroups(
+            $recent->filter(fn (Booking $b) => $b->recurrence_id)->pluck('recurrence_id')->unique()
+        );
+
+        return $recent->map(fn (Booking $b) => [
+            'booking' => $b,
+            'group' => $b->recurrence_id ? $recurrenceGroups->get((string) $b->recurrence_id) : null,
+        ]);
     }
 
     public function schedule(Request $request)
