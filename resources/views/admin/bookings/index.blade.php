@@ -221,7 +221,7 @@
                             <a href="{{ route('admin.bookings.show', $occ) }}" class="flex items-center justify-between gap-3 px-4 py-2.5 hover:bg-gray-100 transition-colors {{ $occ->status === 'cancelled' ? 'opacity-60' : '' }}">
                                 <div class="flex items-center gap-3 min-w-0">
                                     <span class="w-2 h-2 rounded-full shrink-0 {{ $occMeta['dot'] }}"></span>
-                                    <span class="text-sm font-semibold text-gray-800 whitespace-nowrap">{{ $occ->date->format('l') }}</span>
+                                    <span class="text-sm font-semibold text-gray-800 whitespace-nowrap">{{ $occ->date->translatedFormat('l') }}</span>
                                     <span class="text-sm text-gray-600">{{ $occ->date->format('d M Y') }}</span>
                                     <span class="text-xs font-mono text-gray-500 whitespace-nowrap">{{ $occ->formatted_start_time }}-{{ $occ->formatted_end_time }}</span>
                                 </div>
