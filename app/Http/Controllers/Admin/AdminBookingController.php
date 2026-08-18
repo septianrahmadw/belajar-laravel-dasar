@@ -319,37 +319,15 @@ class AdminBookingController extends Controller
 
     private function sendBookingNotification(string $email, Mailable $mail): void
     {
-        $maxAttempts = 3;
-        $delaySeconds = 1;
-
-        for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
-            try {
-                \Mail::to($email)->send($mail);
-
-                Log::info('Notifikasi booking berhasil dikirim', [
-                    'email' => $email,
-                    'mailable' => class_basename($mail),
-                    'attempt' => $attempt,
-                ]);
-
-                return;
-            } catch (\Throwable $e) {
-                Log::warning("Gagal mengirim notifikasi booking (percobaan {$attempt}/{$maxAttempts})", [
-                    'email' => $email,
-                    'error' => $e->getMessage(),
-                ]);
-
-                if ($attempt < $maxAttempts) {
-                    sleep($delaySeconds);
-                    $delaySeconds *= 3;
-                }
-            }
+        try {
+            \Mail::to($email)->queue($mail);
+        } catch (\Throwable $e) {
+            Log::error('Gagal mengirim notifikasi booking', [
+                'email' => $email,
+                'mailable' => class_basename($mail),
+                'error' => $e->getMessage(),
+            ]);
         }
-
-        Log::error('Notifikasi booking gagal dikirim setelah beberapa percobaan', [
-            'email' => $email,
-            'mailable' => class_basename($mail),
-        ]);
     }
 
     public function reject(Request $request, Booking $booking)
