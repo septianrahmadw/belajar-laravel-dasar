@@ -152,7 +152,7 @@ export default function CalendarWidget({ roomId, initialDate, selectedDate: exte
     const formattedDate = selectedDateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
     return (
-        <div className="bg-white/60 backdrop-blur-lg rounded-2xl border border-white/40 shadow-lg overflow-hidden sticky top-24">
+        <div className="bg-white/60 backdrop-blur-lg rounded-2xl border border-white/40 shadow-lg overflow-hidden">
             <div className="p-4 border-b border-white/30 bg-white/20 backdrop-blur-xl">
                 <h2 className="text-xl font-extrabold text-gray-900 text-center">Kalender</h2>
                 <p className="text-sm text-gray-600 mt-0.5 text-center">Lihat jadwal sebulan penuh</p>

@@ -26,39 +26,39 @@ export default function RoomShowApp({ room, currentDate, monthBookings, prodis, 
                 </a>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 lg:col-start-1 lg:row-start-1">
+            <div className="flex flex-col lg:flex-row gap-8">
+                <div className="flex-1 min-w-0 space-y-8">
                     <RoomHeader room={room} />
-                </div>
 
-                <div className="lg:col-span-1 lg:col-start-3 lg:row-start-1 lg:row-span-2 lg:self-start">
-                    <CalendarWidget
-                        actionButton={
-                            <button
-                                onClick={() => setShowModal(true)}
-                                className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
-                            >
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                </svg>
-                                Ajukan Peminjaman
-                            </button>
-                        }
-                        roomId={room.id}
-                        initialDate={currentDate}
-                        selectedDate={selectedDate}
-                        initialMonthBookings={monthBookings}
-                        onSelectDate={handleSelectDate}
-                    />
-                </div>
-
-                <div className="lg:col-span-2 lg:col-start-1 lg:row-start-2">
                     <ScheduleGrid
                         roomId={room.id}
                         currentDate={selectedDate}
                         initialBookings={initialBookings}
                         onSelectDate={handleSelectDate}
                     />
+                </div>
+
+                <div className="w-full lg:w-80 shrink-0">
+                    <div className="lg:sticky lg:top-24">
+                        <CalendarWidget
+                            actionButton={
+                                <button
+                                    onClick={() => setShowModal(true)}
+                                    className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+                                >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                    </svg>
+                                    Ajukan Peminjaman
+                                </button>
+                            }
+                            roomId={room.id}
+                            initialDate={currentDate}
+                            selectedDate={selectedDate}
+                            initialMonthBookings={monthBookings}
+                            onSelectDate={handleSelectDate}
+                        />
+                    </div>
                 </div>
             </div>
 
