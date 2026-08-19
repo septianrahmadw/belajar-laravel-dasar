@@ -72,6 +72,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('bookings/{booking}/cancel-recurrence', [AdminBookingController::class, 'cancelRecurrence'])->name('bookings.cancel-recurrence');
         Route::delete('bookings/{booking}', [AdminBookingController::class, 'destroy'])->name('bookings.destroy');
         Route::delete('bookings/{booking}/force-delete', [AdminBookingController::class, 'forceDestroy'])->name('bookings.force-destroy');
+        Route::delete('bookings/{booking}/force-delete-recurrence', [AdminBookingController::class, 'forceDestroyRecurrence'])->name('bookings.force-destroy-recurrence');
     });
 
     // Admin only: user management

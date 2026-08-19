@@ -418,6 +418,18 @@ class AdminBookingController extends Controller
         return redirect()->route('admin.bookings.index')->with('success', 'Data booking berhasil dihapus permanen.');
     }
 
+    public function forceDestroyRecurrence(Booking $booking)
+    {
+        if (!$booking->recurrence_id) {
+            return back()->withErrors(['error' => 'Booking ini bukan bagian dari jadwal berulang.']);
+        }
+
+        $count = Booking::where('recurrence_id', $booking->recurrence_id)->delete();
+
+        return redirect()->route('admin.bookings.index')
+            ->with('success', "{$count} jadwal berulang berhasil dihapus permanen.");
+    }
+
     public function exportPdf(Request $request)
     {
         $query = Booking::with('room', 'prodi');
