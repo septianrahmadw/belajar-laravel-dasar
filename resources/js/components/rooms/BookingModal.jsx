@@ -16,13 +16,13 @@ const JURUSAN_OPTIONS = [
 const TIME_SLOTS_START = Array.from({ length: 14 }, (_, i) => String(i + 7).padStart(2, '0') + ':00');
 const TIME_SLOTS_END = Array.from({ length: 14 }, (_, i) => String(i + 8).padStart(2, '0') + ':00');
 
-export default function BookingModal({ isOpen, onClose, roomId, currentDate, prodis }) {
+export default function BookingModal({ isOpen, onClose, roomId, currentDate, prodis, verifiedProdi }) {
     const [form, setForm] = useState({
         booker_name: '',
         booker_email: '',
         booker_phone: '',
-        jurusan: '',
-        prodi_id: '',
+        jurusan: verifiedProdi?.jurusan || '',
+        prodi_id: verifiedProdi?.id || '',
         purpose: '',
         mata_kuliah: '',
         semester: '',
@@ -52,12 +52,14 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
     }, [isOpen]);
 
     useEffect(() => {
-        if (!form.jurusan) {
+        if (verifiedProdi) {
+            setFilteredProdis(prodis.filter(p => p.id === verifiedProdi.id));
+        } else if (!form.jurusan) {
             setFilteredProdis(prodis);
         } else {
             setFilteredProdis(prodis.filter(p => p.jurusan === form.jurusan));
         }
-    }, [form.jurusan, prodis]);
+    }, [form.jurusan, prodis, verifiedProdi]);
 
     useEffect(() => {
         if (form.date && form.start_time && form.end_time && form.start_time < form.end_time) {
@@ -167,16 +169,20 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
                                 className={inputCls} />
                         </FloatingField>
 
+                        <input type="hidden" name="jurusan" value={form.jurusan} />
+                        <input type="hidden" name="prodi_id" value={form.prodi_id} />
                         <div className="grid grid-cols-2 gap-3">
                             <FloatingField label="Jurusan" required value={form.jurusan} isDropdown>
-                                <select name="jurusan" value={form.jurusan} onChange={handleChange} required className={inputCls}>
+                                <select value={form.jurusan} onChange={handleChange} required
+                                    disabled={!!verifiedProdi}
+                                    className={inputCls + (verifiedProdi ? ' bg-gray-50 cursor-not-allowed' : '')}>
                                     <option value="" disabled hidden></option>
                                     {JURUSAN_OPTIONS.map(j => <option key={j} value={j}>{j}</option>)}
                                 </select>
                             </FloatingField>
                             <FloatingField label="Prodi" required value={form.prodi_id} isDropdown>
-                                <select name="prodi_id" value={form.prodi_id} onChange={handleChange} required disabled={!form.jurusan}
-                                    className={inputCls + (!form.jurusan ? ' text-gray-400 cursor-not-allowed' : '')}>
+                                <select value={form.prodi_id} onChange={handleChange} required disabled={!!verifiedProdi || !form.jurusan}
+                                    className={inputCls + (verifiedProdi || !form.jurusan ? ' bg-gray-50 cursor-not-allowed' : '')}>
                                     <option value="" disabled hidden></option>
                                     {filteredProdis.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                                 </select>

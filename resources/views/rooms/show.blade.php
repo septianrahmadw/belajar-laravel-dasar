@@ -25,6 +25,7 @@
              'booker_name' => $b->booker_name,
              'status' => $b->status,
          ]),
+         'verifiedProdi' => $verifiedProdi ? ['id' => $verifiedProdi->id, 'name' => $verifiedProdi->name, 'jurusan' => $verifiedProdi->jurusan] : null,
      ]) }}">
 </div>
 @endsection

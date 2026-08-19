@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Prodi;
 use App\Models\Room;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,8 @@ class AdminRoomController extends Controller
 
     public function create()
     {
-        return view('admin.rooms.create');
+        $prodis = Prodi::where('is_active', true)->orderBy('jurusan')->orderBy('name')->get();
+        return view('admin.rooms.create', compact('prodis'));
     }
 
     public function store(Request $request)
@@ -29,6 +31,8 @@ class AdminRoomController extends Controller
             'description' => 'nullable|string|max:1000',
             'facilities' => 'nullable|string',
             'is_active' => 'boolean',
+            'allowed_prodis' => 'nullable|array',
+            'allowed_prodis.*' => 'exists:prodis,id',
         ]);
 
         if (!empty($validated['facilities'])) {
@@ -39,14 +43,20 @@ class AdminRoomController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active');
 
-        Room::create($validated);
+        $allowedProdis = $validated['allowed_prodis'] ?? [];
+        unset($validated['allowed_prodis']);
+
+        $room = Room::create($validated);
+        $room->allowedProdis()->sync($allowedProdis);
 
         return redirect()->route('admin.rooms.index')->with('success', 'Ruangan berhasil ditambahkan.');
     }
 
     public function edit(Room $room)
     {
-        return view('admin.rooms.edit', compact('room'));
+        $prodis = Prodi::where('is_active', true)->orderBy('jurusan')->orderBy('name')->get();
+        $room->load('allowedProdis');
+        return view('admin.rooms.edit', compact('room', 'prodis'));
     }
 
     public function update(Request $request, Room $room)
@@ -59,6 +69,8 @@ class AdminRoomController extends Controller
             'description' => 'nullable|string|max:1000',
             'facilities' => 'nullable|string',
             'is_active' => 'boolean',
+            'allowed_prodis' => 'nullable|array',
+            'allowed_prodis.*' => 'exists:prodis,id',
         ]);
 
         if (!empty($validated['facilities'])) {
@@ -69,7 +81,11 @@ class AdminRoomController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active');
 
+        $allowedProdis = $validated['allowed_prodis'] ?? [];
+        unset($validated['allowed_prodis']);
+
         $room->update($validated);
+        $room->allowedProdis()->sync($allowedProdis);
 
         return redirect()->route('admin.rooms.index')->with('success', 'Ruangan berhasil diperbarui.');
     }

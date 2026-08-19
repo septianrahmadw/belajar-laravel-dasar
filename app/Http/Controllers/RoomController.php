@@ -15,7 +15,7 @@ class RoomController extends Controller
         $now = Carbon::now();
         $currentHour = (int) $now->format('H');
 
-        $rooms = Room::where('is_active', true)->get()->map(function ($room) use ($today, $now, $currentHour) {
+        $rooms = Room::with('allowedProdis')->where('is_active', true)->get()->map(function ($room) use ($today, $now, $currentHour) {
             $allTodayBookings = $room->bookings()
                 ->whereDate('date', $today)
                 ->whereNotIn('status', ['rejected', 'cancelled'])
@@ -83,14 +83,26 @@ class RoomController extends Controller
                 'is_fully_booked' => $isFullyBooked,
                 'status' => $isFullyBooked ? 'full' : ($bookedHours > 0 ? 'partial' : 'available'),
                 'next_booking' => $upcomingBookings->first(),
+                'is_restricted' => $room->is_restricted(),
+                'allowed_prodis' => $room->allowedProdis->map(fn ($p) => ['id' => $p->id, 'name' => $p->name, 'jurusan' => $p->jurusan]),
             ];
         });
 
-        return view('rooms.index', compact('rooms'));
+        $allProdis = Prodi::where('is_active', true)->orderBy('jurusan')->orderBy('name')->get();
+
+        return view('rooms.index', compact('rooms', 'allProdis'));
     }
 
     public function show(Room $room, Request $request)
     {
+        if ($room->is_restricted()) {
+            $verifiedProdiId = session("room_{$room->id}_verified_prodi");
+            if (!$verifiedProdiId || !$room->isProdiAllowed($verifiedProdiId)) {
+                return redirect()->route('rooms.index')
+                    ->with('error', 'Anda tidak memiliki akses ke lab ini. Silakan verifikasi prodi Anda terlebih dahulu.');
+            }
+        }
+
         $date = $request->get('date', Carbon::today()->format('Y-m-d'));
         $carbonDate = Carbon::parse($date);
 
@@ -140,7 +152,10 @@ class RoomController extends Controller
                 ]);
             });
 
-        return view('rooms.show', compact('room', 'date', 'bookings', 'weekDates', 'timeSlots', 'carbonDate', 'prodis', 'monthBookings'));
+        $verifiedProdiId = session("room_{$room->id}_verified_prodi");
+        $verifiedProdi = $verifiedProdiId ? Prodi::find($verifiedProdiId) : null;
+
+        return view('rooms.show', compact('room', 'date', 'bookings', 'weekDates', 'timeSlots', 'carbonDate', 'prodis', 'monthBookings', 'verifiedProdi'));
     }
 
     public function schedule(Room $room, Request $request)
@@ -243,6 +258,29 @@ class RoomController extends Controller
         return response()->json([
             'available' => $isAvailable,
             'conflicts' => $conflictingBookings,
+        ]);
+    }
+
+    public function verifyProdi(Room $room, Request $request)
+    {
+        $request->validate([
+            'prodi_id' => 'required|exists:prodis,id',
+        ]);
+
+        $prodiId = (int) $request->prodi_id;
+
+        if (!$room->isProdiAllowed($prodiId)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Prodi Anda tidak memiliki akses ke lab ini.',
+            ], 403);
+        }
+
+        session(["room_{$room->id}_verified_prodi" => $prodiId]);
+
+        return response()->json([
+            'success' => true,
+            'redirect' => route('rooms.show', $room),
         ]);
     }
 }

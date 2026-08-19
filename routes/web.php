@@ -14,6 +14,9 @@ Route::get('/', [RoomController::class, 'index'])->name('home');
 
 Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
 Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
+Route::post('/rooms/{room}/verify-prodi', [RoomController::class, 'verifyProdi'])
+    ->middleware('throttle:booking-create')
+    ->name('rooms.verify-prodi');
 Route::get('/rooms/{room}/schedule', [RoomController::class, 'schedule'])->name('rooms.schedule');
 Route::get('/rooms/{room}/month', [RoomController::class, 'monthSchedule'])->name('rooms.month-schedule');
 Route::get('/rooms/{room}/check-availability', [RoomController::class, 'checkAvailability'])

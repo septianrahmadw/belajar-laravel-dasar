@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Room extends Model
@@ -29,6 +30,25 @@ class Room extends Model
     public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class);
+    }
+
+    public function allowedProdis(): BelongsToMany
+    {
+        return $this->belongsToMany(Prodi::class, 'room_prodis');
+    }
+
+    public function is_restricted(): bool
+    {
+        return $this->allowedProdis()->exists();
+    }
+
+    public function isProdiAllowed(int $prodiId): bool
+    {
+        if (!$this->is_restricted()) {
+            return true;
+        }
+
+        return $this->allowedProdis()->where('prodi_id', $prodiId)->exists();
     }
 
     public function getBookingsForDate(string $date): HasMany

@@ -53,6 +53,34 @@
                     <p class="text-xs text-gray-400 mt-1">Pisahkan setiap fasilitas dengan tanda koma</p>
                 </div>
 
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Batasan Prodi</label>
+                    <p class="text-xs text-gray-400 mb-3">Pilih prodi yang diizinkan mengakses lab ini. Kosongkan jika semua prodi boleh mengakses.</p>
+                    @php
+                        $groupedProdis = $prodis->groupBy('jurusan');
+                        $selectedProdis = old('allowed_prodis', []);
+                    @endphp
+                    <div class="border border-gray-200 rounded-xl p-4 max-h-60 overflow-y-auto space-y-4">
+                        @forelse ($groupedProdis as $jurusan => $jurusanProdis)
+                        <div>
+                            <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{{ $jurusan }}</p>
+                            <div class="space-y-1.5">
+                                @foreach ($jurusanProdis as $prodi)
+                                <label class="flex items-center gap-2.5 cursor-pointer group">
+                                    <input type="checkbox" name="allowed_prodis[]" value="{{ $prodi->id }}"
+                                           {{ in_array($prodi->id, $selectedProdis) ? 'checked' : '' }}
+                                           class="rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <span class="text-sm text-gray-700 group-hover:text-gray-900">{{ $prodi->name }}</span>
+                                </label>
+                                @endforeach
+                            </div>
+                        </div>
+                        @empty
+                        <p class="text-xs text-gray-400 text-center">Belum ada prodi tersedia</p>
+                        @endforelse
+                    </div>
+                </div>
+
                 <div class="flex items-center gap-3">
                     <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', '1') ? 'checked' : '' }}
                            class="rounded-lg border-gray-300 text-blue-600 focus:ring-blue-500">

@@ -3,7 +3,7 @@ import CalendarWidget from './CalendarWidget';
 import ScheduleGrid from './ScheduleGrid';
 import BookingModal from './BookingModal';
 
-export default function RoomShowApp({ room, currentDate, monthBookings, prodis, initialBookings }) {
+export default function RoomShowApp({ room, currentDate, monthBookings, prodis, initialBookings, verifiedProdi }) {
     const [selectedDate, setSelectedDate] = useState(currentDate);
     const [showModal, setShowModal] = useState(false);
 
@@ -68,6 +68,7 @@ export default function RoomShowApp({ room, currentDate, monthBookings, prodis, 
                 roomId={room.id}
                 currentDate={selectedDate}
                 prodis={prodis}
+                verifiedProdi={verifiedProdi}
             />
         </div>
     );

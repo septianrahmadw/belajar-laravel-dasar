@@ -94,7 +94,12 @@
                         <span class="inline-flex items-center bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold">
                             {{ $room->code }}
                         </span>
-                        @if ($status === 'available')
+                        @if ($data['is_restricted'])
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/80 backdrop-blur-sm text-white">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                            Terbatas
+                        </span>
+                        @elseif ($status === 'available')
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-sm text-white">
                             <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
                             Tersedia
@@ -165,6 +170,16 @@
                         <span class="text-[10px] text-gray-400 font-mono">21:00</span>
                     </div>
 
+                    @if ($data['is_restricted'])
+                    <button onclick="openProdiModal({{ $room->id }}, {{ $data['allowed_prodis']->toJson() }})" class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors shadow-md shadow-blue-200">
+                        @if ($status === 'full')
+                        Lihat Jadwal Lengkap
+                        @else
+                        Lihat Jadwal & Booking
+                        @endif
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                    </button>
+                    @else
                     <a href="{{ route('rooms.show', $room) }}" class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors shadow-md shadow-blue-200">
                         @if ($status === 'full')
                         Lihat Jadwal Lengkap
@@ -173,6 +188,7 @@
                         @endif
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
                     </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -185,4 +201,137 @@
         @endforelse
     </div>
 </div>
+
+<div id="prodiModal" class="fixed inset-0 z-50 hidden" aria-modal="true" role="dialog">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeProdiModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">Akses Terbatas</h3>
+                        <p class="text-sm text-gray-500">Lab ini hanya untuk prodi tertentu</p>
+                    </div>
+                </div>
+
+                <p class="text-sm text-gray-600 mb-4">Pilih prodi Anda untuk melanjutkan ke halaman booking:</p>
+
+                <div class="mb-4">
+                    <label for="prodi_select" class="block text-sm font-semibold text-gray-700 mb-1.5">Prodi</label>
+                    <select id="prodi_select" class="w-full rounded-xl border-gray-200 border px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                        <option value="" disabled selected>Pilih Prodi</option>
+                    </select>
+                </div>
+
+                <div id="prodi_error" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 mb-4">
+                    <p class="text-sm text-red-600" id="prodi_error_text"></p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="closeProdiModal()" class="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">
+                        Batal
+                    </button>
+                    <button id="prodi_submit_btn" onclick="submitProdiVerification()" disabled class="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Verifikasi & Masuk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+    let currentRoomId = null;
+    let currentAllowedProdis = [];
+
+    function openProdiModal(roomId, allowedProdis) {
+        currentRoomId = roomId;
+        currentAllowedProdis = allowedProdis;
+
+        const select = document.getElementById('prodi_select');
+        select.innerHTML = '<option value="" disabled selected>Pilih Prodi</option>';
+
+        const grouped = {};
+        allowedProdis.forEach(p => {
+            if (!grouped[p.jurusan]) grouped[p.jurusan] = [];
+            grouped[p.jurusan].push(p);
+        });
+
+        Object.keys(grouped).forEach(jurusan => {
+            const group = document.createElement('optgroup');
+            group.label = jurusan;
+            grouped[jurusan].forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = p.name;
+                group.appendChild(opt);
+            });
+            select.appendChild(group);
+        });
+
+        document.getElementById('prodi_error').classList.add('hidden');
+        document.getElementById('prodi_submit_btn').disabled = true;
+        document.getElementById('prodiModal').classList.remove('hidden');
+    }
+
+    function closeProdiModal() {
+        document.getElementById('prodiModal').classList.add('hidden');
+        document.getElementById('prodi_select').selectedIndex = 0;
+        document.getElementById('prodi_error').classList.add('hidden');
+        document.getElementById('prodi_submit_btn').disabled = true;
+        currentRoomId = null;
+    }
+
+    document.getElementById('prodi_select').addEventListener('change', function() {
+        document.getElementById('prodi_submit_btn').disabled = !this.value;
+        document.getElementById('prodi_error').classList.add('hidden');
+    });
+
+    function submitProdiVerification() {
+        const select = document.getElementById('prodi_select');
+        const prodiId = select.value;
+        if (!prodiId || !currentRoomId) return;
+
+        const btn = document.getElementById('prodi_submit_btn');
+        btn.disabled = true;
+        btn.textContent = 'Memverifikasi...';
+
+        fetch('/rooms/' + currentRoomId + '/verify-prodi', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ prodi_id: prodiId }),
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect;
+            } else {
+                const errDiv = document.getElementById('prodi_error');
+                document.getElementById('prodi_error_text').textContent = data.message || 'Prodi tidak memiliki akses.';
+                errDiv.classList.remove('hidden');
+                btn.disabled = false;
+                btn.textContent = 'Verifikasi & Masuk';
+            }
+        })
+        .catch(() => {
+            const errDiv = document.getElementById('prodi_error');
+            document.getElementById('prodi_error_text').textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+            errDiv.classList.remove('hidden');
+            btn.disabled = false;
+            btn.textContent = 'Verifikasi & Masuk';
+        });
+    }
+</script>
+@endpush
 @endsection
