@@ -42,6 +42,36 @@
     </div>
 </div>
 
+<div class="bg-white rounded-xl border border-gray-100 px-4 py-3 mb-6 flex items-center justify-between">
+    @if($prevRoom)
+        <a href="{{ route('admin.schedule.room', [$prevRoom['id'], 'date' => $carbonDate->format('Y-m-d')]) }}"
+           class="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+            <span class="hidden sm:inline">{{ $prevRoom['name'] }}</span>
+            <span class="sm:hidden">Sebelumnya</span>
+        </a>
+    @else
+        <div></div>
+    @endif
+
+    <span class="text-sm font-bold text-gray-900 text-center">{{ $schedule['room']->name }}</span>
+
+    @if($nextRoom)
+        <a href="{{ route('admin.schedule.room', [$nextRoom['id'], 'date' => $carbonDate->format('Y-m-d')]) }}"
+           class="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition-colors">
+            <span class="hidden sm:inline">{{ $nextRoom['name'] }}</span>
+            <span class="sm:hidden">Selanjutnya</span>
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+        </a>
+    @else
+        <div></div>
+    @endif
+</div>
+
 <div class="bg-white rounded-xl border border-gray-100 overflow-hidden">
     <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
         <div>

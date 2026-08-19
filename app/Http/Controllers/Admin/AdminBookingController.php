@@ -173,7 +173,17 @@ class AdminBookingController extends Controller
         $prevWeek = $weekStart->copy()->subWeek()->format('Y-m-d');
         $nextWeek = $weekStart->copy()->addWeek()->format('Y-m-d');
 
-        return view('admin.schedule.show', compact('schedule', 'weekDates', 'carbonDate', 'prevWeek', 'nextWeek'));
+        $rooms = Room::where('is_active', true)->orderBy('name')->pluck('name', 'id');
+        $roomKeys = $rooms->keys()->toArray();
+        $currentIndex = array_search($room->id, $roomKeys);
+        $prevRoom = $currentIndex > 0
+            ? ['id' => $roomKeys[$currentIndex - 1], 'name' => $rooms[$roomKeys[$currentIndex - 1]]]
+            : null;
+        $nextRoom = $currentIndex < count($roomKeys) - 1
+            ? ['id' => $roomKeys[$currentIndex + 1], 'name' => $rooms[$roomKeys[$currentIndex + 1]]]
+            : null;
+
+        return view('admin.schedule.show', compact('schedule', 'weekDates', 'carbonDate', 'prevWeek', 'nextWeek', 'prevRoom', 'nextRoom'));
     }
 
     public function show(Booking $booking)
