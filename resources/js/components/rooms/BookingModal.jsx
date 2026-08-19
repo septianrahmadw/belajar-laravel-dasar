@@ -169,11 +169,11 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
                                 className={inputCls} />
                         </FloatingField>
 
-                        <input type="hidden" name="jurusan" value={form.jurusan} />
-                        <input type="hidden" name="prodi_id" value={form.prodi_id} />
+                        {verifiedProdi && <input type="hidden" name="jurusan" value={form.jurusan} />}
+                        {verifiedProdi && <input type="hidden" name="prodi_id" value={form.prodi_id} />}
                         <div className="grid grid-cols-2 gap-3">
                             <FloatingField label="Jurusan" required value={form.jurusan} isDropdown>
-                                <select value={form.jurusan} onChange={handleChange} required
+                                <select name="jurusan" value={form.jurusan} onChange={handleChange} required
                                     disabled={!!verifiedProdi}
                                     className={inputCls + (verifiedProdi ? ' bg-gray-50 cursor-not-allowed' : '')}>
                                     <option value="" disabled hidden></option>
@@ -181,7 +181,7 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
                                 </select>
                             </FloatingField>
                             <FloatingField label="Prodi" required value={form.prodi_id} isDropdown>
-                                <select value={form.prodi_id} onChange={handleChange} required disabled={!!verifiedProdi || !form.jurusan}
+                                <select name="prodi_id" value={form.prodi_id} onChange={handleChange} required disabled={!!verifiedProdi || !form.jurusan}
                                     className={inputCls + (verifiedProdi || !form.jurusan ? ' bg-gray-50 cursor-not-allowed' : '')}>
                                     <option value="" disabled hidden></option>
                                     {filteredProdis.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -226,6 +226,21 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
                             <input type="text" name="teknisi" value={form.teknisi} onChange={handleChange}
                                 className={inputCls} />
                         </FloatingField>
+
+                        <div className="grid grid-cols-2 gap-3">
+                            <FloatingField label="Jam Mulai" required value={form.start_time} isDropdown>
+                                <select name="start_time" value={form.start_time} onChange={handleChange} required className={inputCls}>
+                                    <option value="" disabled hidden></option>
+                                    {TIME_SLOTS_START.map(t => <option key={t} value={t}>{t}</option>)}
+                                </select>
+                            </FloatingField>
+                            <FloatingField label="Jam Selesai" required value={form.end_time} isDropdown>
+                                <select name="end_time" value={form.end_time} onChange={handleChange} required className={inputCls}>
+                                    <option value="" disabled hidden></option>
+                                    {TIME_SLOTS_END.map(t => <option key={t} value={t}>{t}</option>)}
+                                </select>
+                            </FloatingField>
+                        </div>
 
                         <DatePickerField label="Tanggal Mulai" required value={form.date} name="date"
                             onChange={handleChange} min={new Date().toISOString().split('T')[0]} />
@@ -272,21 +287,6 @@ export default function BookingModal({ isOpen, onClose, roomId, currentDate, pro
                                     )}
                                 </div>
                             )}
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3">
-                            <FloatingField label="Jam Mulai" required value={form.start_time} isDropdown>
-                                <select name="start_time" value={form.start_time} onChange={handleChange} required className={inputCls}>
-                                    <option value="" disabled hidden></option>
-                                    {TIME_SLOTS_START.map(t => <option key={t} value={t}>{t}</option>)}
-                                </select>
-                            </FloatingField>
-                            <FloatingField label="Jam Selesai" required value={form.end_time} isDropdown>
-                                <select name="end_time" value={form.end_time} onChange={handleChange} required className={inputCls}>
-                                    <option value="" disabled hidden></option>
-                                    {TIME_SLOTS_END.map(t => <option key={t} value={t}>{t}</option>)}
-                                </select>
-                            </FloatingField>
                         </div>
 
                         {showConflict && (
